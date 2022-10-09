@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <Version>6.0.6</Version>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <PackageProjectUrl>https://github.com/densen2014/BootstrapBlazor.Bluetooth</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/densen2014/BootstrapBlazor.Bluetooth</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Bootstrap Blazor Bluetooth /Printer Components 蓝牙和打印组件库</PackageTags>
+        <Description>Bootstrap UI Bluetooth/Printer components experience</Description>
+        <AssemblyName>BootstrapBlazor.Bluetooth</AssemblyName>
+        <RootNamespace>BootstrapBlazor.Bluetooth</RootNamespace>
+        <AssemblyOriginatorKeyFile>..\keys\Longbow.Utility.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+    </ItemGroup>
+</Project>
