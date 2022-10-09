@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BootstrapBlazor.OCR</name>
+    </assembly>
+    <members>
+        <member name="T:BootstrapBlazor.Components.OCR">
+            <summary>
+            OCR 组件
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OcrElement">
+            <summary>
+            UI界面元素的引用对象
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.PrintButtonText">
+            <summary>
+            获得/设置 识别按钮文字 默认为 识别文字
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.Opt">
+            <summary>
+            获得/设置 OcrOption
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OnUpdateStatus">
+            <summary>
+            获得/设置 状态更新回调方法
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OnUpdateError">
+            <summary>
+            获得/设置 错误更新回调方法
+            </summary>
+        </member>
+        <member name="F:BootstrapBlazor.Components.OCR.Devices">
+            <summary>
+            可用已配对设备列表
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.ShowUI">
+            <summary>
+            获得/设置 显示内置UI
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.Debug">
+            <summary>
+            获得/设置 显示log
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.Devicename">
+            <summary>
+            获得/设置 设备名称
+            </summary>
+        </member>
+        <member name="M:BootstrapBlazor.Components.OCR.Print">
+            <summary>
+            打印
+            </summary>
+        </member>
+        <member name="M:BootstrapBlazor.Components.OCR.GetResult(BootstrapBlazor.Components.OcrOption,System.String)">
+            <summary>
+            连接完成回调方法
+            </summary>
+            <param name="opt"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OnResult">
+            <summary>
+            获得/设置 连接完成回调方法
+            </summary>
+        </member>
+        <member name="M:BootstrapBlazor.Components.OCR.GetDevices(System.Collections.Generic.List{System.String})">
+            <summary>
+            获取已配对设备回调方法
+            </summary>
+            <param name="devices"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OnGetDevices">
+            <summary>
+            获得/设置 获取已配对设备回调方法
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OnError">
+            <summary>
+            获得/设置 错误回调方法
+            </summary>
+        </member>
+        <member name="M:BootstrapBlazor.Components.OCR.UpdateStatus(System.String)">
+            <summary>
+            状态更新回调方法
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BootstrapBlazor.Components.OCR.UpdateError(System.String)">
+            <summary>
+            错误更新回调方法
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BootstrapBlazor.Components.OcrType">
+            <summary>
+            OCR类型
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OcrOption.Type">
+            <summary>
+            打印机类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OcrOption.NamePrefix">
+            <summary>
+            初始搜索设备名称前缀,默认null
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OcrOption.Devicename">
+            <summary>
+            设备名称
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OcrOption.DeviceID">
+            <summary>
+            设备ID
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OcrOption.ServiceUuid">
+            <summary>
+            服务UUID/ServiceUUID, 默认0xff00. [非空!]<para></para>
+            常见打印机ServiceUUID:<para></para>
+            0000ff00-0000-1000-8000-00805f9b34fb => 0xff00<para></para>
+            e7810a71-73ae-499d-8c15-faa9aef0c3f2<para></para>
+            0000fee7-0000-1000-8000-00805f9b34fb<para></para>
+            其他设备ServiceUUID:<para></para>
+            'heart_rate'<para></para>
+            0x1802<para></para>
+            0x1803<para></para>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OcrOption.CharacteristicUuid">
+            <summary>
+            特征UUID / Characteristic UUID
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OcrOption.MaxChunk">
+            <summary>
+            数据切片大小,默认100
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BootstrapBlazor.Ocr.Services.OcrService.OnResult">
+            <summary>
+            获得/设置 连接完成回调方法
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Ocr.Services.OcrService.OnError">
+            <summary>
+            获得/设置 错误回调方法
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.OcrServiceCollectionExtensions">
+            <summary>
+            OCR 服务扩展类
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.OcrServiceCollectionExtensions.AddOcrExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String)">
+            <summary>
+            增加 OCR 服务扩展类,<para></para>
+            </summary>
+            <param name="services"></param>
+            <param name="key"></param>
+            <param name="url"></param> 
+            <returns></returns>
+        </member>
+    </members>
+</doc>

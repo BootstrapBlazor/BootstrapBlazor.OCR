@@ -1,4 +1,4 @@
-## Blazor Bluetooth & Printer 蓝牙和打印 组件
+## Blazor 光学字符识别 (OCR) 组件
 
 #### 1. 蓝牙打印机 Printer  
 #### 2. 蓝牙心率带  Heart Rate 

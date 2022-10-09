@@ -1,33 +1,9 @@
-﻿export function addScript(url) {
-    let scriptsIncluded = false;
-    let scriptTags = document.querySelectorAll('head > script');
-    scriptTags.forEach(scriptTag => {
-        if (scriptTag) {
-            let srcAttribute = scriptTag.getAttribute('src');
-            if (srcAttribute && srcAttribute.startsWith(url)) {
-                scriptsIncluded = true;
-                return true;
-            }
-        }
-    });
-
-    if (scriptsIncluded) {
-        return true;
-    }
-
-    let script = document.createElement('script');
-    script.src = url;
-    document.head.appendChild(script);
-    return false;
-
-}
-
-let port;
+﻿let port;
 let bluetoothDevice;
 let serialWriter;
 let myDescriptor;
 
-export function printFunction(wrapper, element, opt = null, callfunction = null, write = null) {
+export function ocrFunction(wrapper, element, opt = null, callfunction = null, write = null) {
     if (!element.id) element = document;
     const log = element.querySelector("[data-action=log]");
     const btnConnect = element.querySelector("[data-action=btnConnect]");

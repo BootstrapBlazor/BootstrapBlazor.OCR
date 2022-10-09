@@ -4,7 +4,9 @@
 // e-mail:zhouchuanglin@gmail.com 
 // **********************************
 
+using BootstrapBlazor.Ocr.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Data;
@@ -17,7 +19,11 @@ namespace BootstrapBlazor.Components;
 /// </summary>
 public partial class OCR : IAsyncDisposable
 {
+    string url { get; set; } = "https://freepos.es/uploads/demo/Doc/libai.jpg";
+    string log;
+    string log2;
     [Inject] IJSRuntime? JS { get; set; }
+    [Inject] OcrService? OcrService { get; set; }
     private IJSObjectReference? module;
     private DotNetObjectReference<OCR>? InstanceOcr { get; set; }
 
@@ -27,37 +33,17 @@ public partial class OCR : IAsyncDisposable
     public ElementReference OcrElement { get; set; }
 
     /// <summary>
-    /// 获得/设置 打印按钮文字 默认为 打印
+    /// 获得/设置 识别按钮文字 默认为 识别文字
     /// </summary>
     [Parameter]
     [NotNull]
-    public string? PrintButtonText { get; set; } = "打印";
+    public string? PrintButtonText { get; set; } = "执行识别";
 
     /// <summary>
     /// 获得/设置 OcrOption
     /// </summary>
     [Parameter]
-    public OcrOption Opt { get; set; } = new OcrOption();
-
-    /// <summary>
-    /// 打印指令
-    /// </summary>
-    /// <returns></returns>
-    [DisplayName("打印指令")]
-    public string? Commands { get; set; } = @"! 10 200 200 400 1
-BEEP 1
-PW 380
-SETMAG 1 1
-CENTER
-TEXT 10 2 10 40 Micro Bar
-TEXT 12 3 10 75 Blazor
-TEXT 10 2 10 350 eMenu
-B QR 30 150 M 2 U 7
-MA,https://google.com
-ENDQR
-FORM
-PRINT
-";
+    public OcrOption Opt { get; set; } = new OcrOption(); 
 
     /// <summary>
     /// 获得/设置 状态更新回调方法
@@ -93,6 +79,9 @@ PRINT
     /// </summary>
     [Parameter]
     public string? Devicename { get; set; }
+    
+    protected string? uploadstatus;
+    long maxFileSize = 1024 * 1024 * 15;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -100,16 +89,8 @@ PRINT
         {
             if (firstRender)
             {
-                module = await JS!.InvokeAsync<IJSObjectReference>("import", "./_content/BootstrapBlazor.Bluetooth/lib/ocr/app.js");
-                await module.InvokeVoidAsync("addScript", "./_content/BootstrapBlazor.Bluetooth/lib/ocr/gbk.min.js");
-                InstanceOcr = DotNetObjectReference.Create(this);
-                //可选设置初始搜索设备名称前缀,默认null
-                //Opt.NamePrefix = "BMAU";
-                //可选设置服务UUID/ServiceUUID,默认0xff00.[非空!]
-                //Opt.ServiceUuid = "e7810a71-73ae-499d-8c15-faa9aef0c3f2";
-                //Opt.FiltersServices =new object[] { 0xff00, 0xfee7, "e7810a71-73ae-499d-8c15-faa9aef0c3f2" };
-                Opt.ServiceUuid = Opt.ServiceUuid ?? 0xff00;
-                await module.InvokeVoidAsync("ocrFunction", InstanceOcr, OcrElement,Opt);
+                OcrService.OnResult = OnResult1;
+                OcrService.OnError = OnError1;
             }
         }
         catch (Exception e)
@@ -117,7 +98,37 @@ PRINT
             if (OnError != null) await OnError.Invoke(e.Message);
         }
     }
+    protected async Task OnChange(InputFileChangeEventArgs e)
+    {
+        int i = 0;
+        var selectedFiles = e.GetMultipleFiles(100);
+        foreach (var item in selectedFiles)
+        {
+            i++;
+            await OnSubmit(item);
+            uploadstatus += Environment.NewLine + $"[{i}]: " + item.Name;
+        }
+    }
 
+    protected async Task OnSubmit(IBrowserFile efile)
+    {
+        if (efile == null) return;
+        try
+        {
+            using var stream = efile.OpenReadStream(maxFileSize);
+            var res = await OcrService!.StartOcr(url, stream);
+            log = "";
+            res.ForEach(a => log += a + Environment.NewLine);
+            //await module!.InvokeVoidAsync("ocrFunction", InstanceOcr, OcrElement, Opt, "write", Commands);
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            if (OnError != null) await OnError.Invoke(e.Message);
+        }
+        StateHasChanged();
+    }
+    
     /// <summary>
     /// 打印
     /// </summary>
@@ -125,7 +136,11 @@ PRINT
     {
         try
         {
-            await module!.InvokeVoidAsync("ocrFunction", InstanceOcr, OcrElement, Opt, "write", Commands);
+            var res = await OcrService!.StartOcr(url);
+            log = "";
+            res.ForEach(a => log += a + Environment.NewLine);
+            //await module!.InvokeVoidAsync("ocrFunction", InstanceOcr, OcrElement, Opt, "write", Commands);
+            StateHasChanged();
         }
         catch (Exception e)
         {
@@ -194,22 +209,6 @@ PRINT
     public Func<List<string>?, Task>? OnGetDevices { get; set; }
 
     /// <summary>
-    /// 连接指定已配对设备
-    /// </summary>
-    public virtual async Task ConnectDevices(string? devicename=null)
-    {
-        try
-        {
-            if (devicename!=null) Opt.Devicename = devicename;
-            await module!.InvokeVoidAsync("connectdevice", InstanceOcr, OcrElement, Opt, Commands);
-        }
-        catch (Exception e)
-        {
-            if (OnError != null) await OnError.Invoke(e.Message);
-        }
-    }
-
-    /// <summary>
     /// 获得/设置 错误回调方法
     /// </summary>
     [Parameter]
@@ -235,6 +234,20 @@ PRINT
     public async Task UpdateError(string status)
     {
         if (OnUpdateError != null) await OnUpdateError.Invoke(status);
+    }
+ 
+
+    private Task OnResult1(string message)
+    {
+        this.log2 = message;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+    private Task OnError1(string message)
+    {
+        this.log2 = message;
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 
 }
