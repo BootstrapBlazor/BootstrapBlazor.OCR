@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BootstrapBlazor.OCR</name>
+    </assembly>
+    <members>
+        <member name="T:BootstrapBlazor.Components.OCR">
+            <summary>
+            OCR 组件
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OcrButtonText">
+            <summary>
+            获得/设置 识别按钮文字 默认为 识别文字
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.ShowUI">
+            <summary>
+            获得/设置 显示内置UI
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.Debug">
+            <summary>
+            获得/设置 显示log
+            </summary>
+        </member>
+        <member name="M:BootstrapBlazor.Components.OCR.GetOCR">
+            <summary>
+            识别文字
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OnError">
+            <summary>
+            获得/设置 错误回调方法
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Ocr.Services.OcrService.OnResult">
+            <summary>
+            获得/设置 连接完成回调方法
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Ocr.Services.OcrService.OnError">
+            <summary>
+            获得/设置 错误回调方法
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.OcrServiceCollectionExtensions">
+            <summary>
+            OCR 服务扩展类
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.OcrServiceCollectionExtensions.AddOcrExtensions(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String)">
+            <summary>
+            增加 OCR 服务扩展类,<para></para>
+            </summary>
+            <param name="services"></param>
+            <param name="key"></param>
+            <param name="url"></param> 
+            <returns></returns>
+        </member>
+    </members>
+</doc>
