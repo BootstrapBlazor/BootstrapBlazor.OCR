@@ -4,6 +4,7 @@
 // e-mail:zhouchuanglin@gmail.com 
 // **********************************
 
+using Azure.AI.FormRecognizer.DocumentAnalysis;
 using BootstrapBlazor.Ocr.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -15,20 +16,20 @@ using System.Reflection;
 namespace BootstrapBlazor.Components;
 
 /// <summary>
-/// OCR 组件
+/// AI表格识别 AI Form 组件
 /// </summary>
-public partial class OCR
+public partial class AiForm
 {
-    public string url { get; set; } = "https://freepos.es/uploads/demo/Doc/libai.jpg";
+    public string url { get; set; } = "https://freepos.es/uploads/demo/Doc/ticket.jpg";
     string? log;
     string? log2;
-    [Inject] OcrService? OcrService { get; set; }
+    [Inject] AiFormService? AiFormService { get; set; }
 
     /// <summary>
     /// 获得/设置 识别完成回调方法,返回 ReadResult
     /// </summary>
     [Parameter]
-    public Func<List<ReadResult>, Task>? OnReadResult { get; set; }
+    public Func<List<AnalyzedDocument>, Task>? OnReadResult { get; set; }
 
     /// <summary>
     /// 获得/设置 识别完成回调方法,返回 string
@@ -58,16 +59,16 @@ public partial class OCR
     
     protected string? uploadstatus;
     long maxFileSize = 1024 * 1024 * 15;
-    public List<ReadResult>? Results { get; set; }
+    public List<AnalyzedDocument>? Results { get; set; }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         try
         {
             if (firstRender)
             {
-                OcrService!.OnResult = OnResult1;
-                OcrService.OnStatus = OnStatus;
-                OcrService.OnError = OnError1;
+                AiFormService!.OnResult = OnResult1;
+                AiFormService.OnStatus = OnStatus;
+                AiFormService.OnError = OnError1;
             }
         }
         catch (Exception e)
@@ -93,7 +94,7 @@ public partial class OCR
         try
         {
             using var stream = efile.OpenReadStream(maxFileSize);
-            var res = await OcrService!.StartOcr(image: stream);
+            var res = await AiFormService!.ReadFileUrl(image: stream);
             log = "";
             res.ForEach(a => log += a + Environment.NewLine);
             StateHasChanged();
@@ -116,7 +117,7 @@ public partial class OCR
     {
         try
         {
-            var res = await OcrService!.StartOcr(url);
+            var res = await AiFormService!.ReadFileUrl(url);
             if (OnResult != null) await OnResult.Invoke(res);
             log = "";
             res.ForEach(a => log += a + Environment.NewLine);
@@ -134,7 +135,7 @@ public partial class OCR
     [Parameter]
     public Func<string, Task>? OnError { get; set; }
   
-    private async Task OnResult1(List<ReadResult> models)
+    private async Task OnResult1(List<AnalyzedDocument> models)
     {
         this.Results = models;
         if (OnReadResult != null) await OnReadResult.Invoke(models);

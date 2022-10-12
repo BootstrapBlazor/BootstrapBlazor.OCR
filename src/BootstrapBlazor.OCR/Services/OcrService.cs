@@ -23,11 +23,12 @@ using Microsoft.AspNetCore.Components;
 using System.Net;
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
+using BootstrapBlazor.OCR.Services;
 
 namespace BootstrapBlazor.Ocr.Services
 {
 
-    public class OcrService
+    public class OcrService: BaseService<ReadResult>
     {
         public OcrService(string key, string url)
         {
@@ -59,35 +60,12 @@ namespace BootstrapBlazor.Ocr.Services
         // URL image for detecting domain-specific content (image of ancient ruins)
         private const string DETECT_DOMAIN_SPECIFIC_URL = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg";
 
-        /// <summary>
-        /// 获得/设置 连接完成回调方法
-        /// </summary>
-        public Func<string, Task>? OnResult { get; set; }
+        
 
-        /// <summary>
-        /// 获得/设置 错误回调方法
-        /// </summary>
-        public Func<string, Task>? OnError { get; set; }
-
-        public async Task GetResult(string status)
-        {
-            try
-            {
-                Console.WriteLine(status);
-                if (OnResult != null) await OnResult.Invoke(status);
-            }
-            catch (Exception e)
-            {
-                if (OnError != null) await OnError.Invoke(e.Message);
-            }
-        }
-
-        string? msg = string.Empty;
-
-        public async Task<List<string>> StartOcr(string url, Stream? image = null)
+        public async Task<List<string>> StartOcr(string? url=null, Stream? image = null)
         {
             msg = "Azure Cognitive Services Computer Vision - .NET quickstart example";
-            await GetResult(msg);
+            await GetStatus(msg);
             Console.WriteLine();
 
             ComputerVisionClient client = Authenticate(endpoint, subscriptionKey);
@@ -136,7 +114,7 @@ namespace BootstrapBlazor.Ocr.Services
         {
             Console.WriteLine("----------------------------------------------------------");
             msg = "READ FILE FROM URL";
-            await GetResult(msg);
+            await GetStatus(msg);
             Console.WriteLine();
 
             // Read text from URL
@@ -153,13 +131,13 @@ namespace BootstrapBlazor.Ocr.Services
             // Extract the text
             ReadOperationResult results;
             msg = $"Extracting text from URL file {Path.GetFileName(urlFile)}...";
-            await GetResult(msg);
+            await GetStatus(msg);
             Console.WriteLine();
             do
             {
                 results = await client.GetReadResultAsync(Guid.Parse(operationId));
                 msg = $"{results.Status}...";
-                await GetResult(msg);
+                await GetStatus(msg);
             }
             while ((results.Status == OperationStatusCodes.Running ||
                 results.Status == OperationStatusCodes.NotStarted));
@@ -168,7 +146,8 @@ namespace BootstrapBlazor.Ocr.Services
             Console.WriteLine();
             var res = new List<string>();
             var textUrlFileResults = results.AnalyzeResult.ReadResults;
-            await GetResult("end");
+            await GetStatus("end");
+            await GetResult(textUrlFileResults.ToList());           
             foreach (ReadResult page in textUrlFileResults)
             {
                 foreach (Line line in page.Lines)
@@ -191,7 +170,7 @@ namespace BootstrapBlazor.Ocr.Services
         {
             Console.WriteLine("----------------------------------------------------------");
             msg = "READ FILE FROM LOCAL";
-            await GetResult(msg);
+            await GetStatus(msg);
             Console.WriteLine();
 
             // Read text from URL
@@ -209,7 +188,7 @@ namespace BootstrapBlazor.Ocr.Services
             // Extract the text
             ReadOperationResult results;
             msg = $"Reading text from local file {Path.GetFileName(localFile)}...";
-            await GetResult(msg);
+            await GetStatus(msg);
             Console.WriteLine();
             do
             {
@@ -224,7 +203,8 @@ namespace BootstrapBlazor.Ocr.Services
             Console.WriteLine();
             var res = new List<string>();
             var textUrlFileResults = results.AnalyzeResult.ReadResults;
-            await GetResult("end");
+            await GetStatus("end");
+            await GetResult(textUrlFileResults.ToList());
             foreach (ReadResult page in textUrlFileResults)
             {
                 foreach (Line line in page.Lines)
@@ -715,117 +695,6 @@ namespace BootstrapBlazor.Ocr.Services
         /*
          * END - GENERATE THUMBNAIL
          */
-    }
-
-
-    public class AiFormService
-    {
-        public AiFormService(string key, string url)
-        {
-            apiKey = key;
-            endpoint = url;
-        }
-
-        /*
-      This code sample shows Prebuilt Receipt operations with the Azure Form Recognizer client library. 
-
-      To learn more, please visit the documentation - Quickstart: Form Recognizer C# client library SDKs
-      https://docs.microsoft.com/en-us/azure/applied-ai-services/form-recognizer/quickstarts/try-v3-csharp-sdk
-    */
-
-
-        /*
-          Remember to remove the key from your code when you're done, and never post it publicly. For production, use
-          secure methods to store and access your credentials. For more information, see 
-          https://docs.microsoft.com/en-us/azure/cognitive-services/cognitive-services-security?tabs=command-line%2Ccsharp#environment-variables-and-application-configuration
-        */
-        string endpoint = "YOUR_FORM_RECOGNIZER_ENDPOINT";
-        string apiKey = "YOUR_FORM_RECOGNIZER_KEY";
-        public async Task ReadFileUrl()
-        {
-
-            var credential = new AzureKeyCredential(apiKey);
-            var client = new DocumentAnalysisClient(new Uri(endpoint), credential);
-
-            //sample document
-            Uri receiptUri = new Uri("https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png");
-
-            AnalyzeDocumentOperation operation = await client.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, "prebuilt-receipt", receiptUri);
-
-            AnalyzeResult receipts = operation.Value;
-
-            // To see the list of the supported fields returned by service and its corresponding types, consult:
-            // https://aka.ms/formrecognizer/receiptfields
-
-            foreach (AnalyzedDocument receipt in receipts.Documents)
-            {
-                if (receipt.Fields.TryGetValue("MerchantName", out DocumentField merchantNameField))
-                {
-                    if (merchantNameField.FieldType == DocumentFieldType.String)
-                    {
-                        string merchantName = merchantNameField.Value.AsString();
-
-                        Console.WriteLine($"Merchant Name: '{merchantName}', with confidence {merchantNameField.Confidence}");
-                    }
-                }
-
-                if (receipt.Fields.TryGetValue("TransactionDate", out DocumentField transactionDateField))
-                {
-                    if (transactionDateField.FieldType == DocumentFieldType.Date)
-                    {
-                        DateTimeOffset transactionDate = transactionDateField.Value.AsDate();
-
-                        Console.WriteLine($"Transaction Date: '{transactionDate}', with confidence {transactionDateField.Confidence}");
-                    }
-                }
-
-                if (receipt.Fields.TryGetValue("Items", out DocumentField itemsField))
-                {
-                    if (itemsField.FieldType == DocumentFieldType.List)
-                    {
-                        foreach (DocumentField itemField in itemsField.Value.AsList())
-                        {
-                            Console.WriteLine("Item:");
-
-                            if (itemField.FieldType == DocumentFieldType.Dictionary)
-                            {
-                                IReadOnlyDictionary<string, DocumentField> itemFields = itemField.Value.AsDictionary();
-
-                                if (itemFields.TryGetValue("Description", out DocumentField itemDescriptionField))
-                                {
-                                    if (itemDescriptionField.FieldType == DocumentFieldType.String)
-                                    {
-                                        string itemDescription = itemDescriptionField.Value.AsString();
-
-                                        Console.WriteLine($"  Description: '{itemDescription}', with confidence {itemDescriptionField.Confidence}");
-                                    }
-                                }
-
-                                if (itemFields.TryGetValue("TotalPrice", out DocumentField itemTotalPriceField))
-                                {
-                                    if (itemTotalPriceField.FieldType == DocumentFieldType.Double)
-                                    {
-                                        double itemTotalPrice = itemTotalPriceField.Value.AsDouble();
-
-                                        Console.WriteLine($"  Total Price: '{itemTotalPrice}', with confidence {itemTotalPriceField.Confidence}");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (receipt.Fields.TryGetValue("Total", out DocumentField totalField))
-                {
-                    if (totalField.FieldType == DocumentFieldType.Double)
-                    {
-                        double total = totalField .Value.AsDouble();
-
-                        Console.WriteLine($"Total: '{total}', with confidence '{totalField.Confidence}'");
-                    }
-                }
-            }
-        }
     }
 }
 
