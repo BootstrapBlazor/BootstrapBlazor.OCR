@@ -37,11 +37,25 @@ public partial class OCR
     public Func<List<string>, Task>? OnResult { get; set; }
 
     /// <summary>
-    /// 获得/设置 识别按钮文字 默认为 识别文字
+    /// 获得/设置 Url识别按钮文字 默认为 执行识别
     /// </summary>
     [Parameter]
     [NotNull]
-    public string? OcrButtonText { get; set; } = "执行识别";
+    public string? OcrUrlButtonText { get; set; } = "执行识别";
+
+    /// <summary>
+    /// 获得/设置 拍照识别按钮文字 默认为 拍照
+    /// </summary>
+    [Parameter]
+    [NotNull]
+    public string? OcrCaptureButtonText { get; set; } = "拍照";
+
+    /// <summary>
+    /// 获得/设置 文件识别按钮文字 默认为 文件
+    /// </summary>
+    [Parameter]
+    [NotNull]
+    public string? OcrButtonText { get; set; } = "文件";
 
 
     /// <summary>
@@ -49,6 +63,18 @@ public partial class OCR
     /// </summary>
     [Parameter]
     public bool ShowUI { get; set; }
+
+    /// <summary>
+    /// 获得/设置 显示内置UI
+    /// </summary>
+    [Parameter]
+    public bool ShowUI_Capture { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 显示内置识别URL的UI
+    /// </summary>
+    [Parameter]
+    public bool ShowUI_Url { get; set; }
 
     /// <summary>
     /// 获得/设置 显示log

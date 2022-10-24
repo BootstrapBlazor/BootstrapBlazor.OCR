@@ -69,14 +69,34 @@
             获得/设置 识别完成回调方法,返回 string
             </summary>
         </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OcrUrlButtonText">
+            <summary>
+            获得/设置 Url识别按钮文字 默认为 执行识别
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.OcrCaptureButtonText">
+            <summary>
+            获得/设置 拍照识别按钮文字 默认为 拍照
+            </summary>
+        </member>
         <member name="P:BootstrapBlazor.Components.OCR.OcrButtonText">
             <summary>
-            获得/设置 识别按钮文字 默认为 识别文字
+            获得/设置 文件识别按钮文字 默认为 文件
             </summary>
         </member>
         <member name="P:BootstrapBlazor.Components.OCR.ShowUI">
             <summary>
             获得/设置 显示内置UI
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.ShowUI_Capture">
+            <summary>
+            获得/设置 显示内置UI
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.ShowUI_Url">
+            <summary>
+            获得/设置 显示内置识别URL的UI
             </summary>
         </member>
         <member name="P:BootstrapBlazor.Components.OCR.Debug">
