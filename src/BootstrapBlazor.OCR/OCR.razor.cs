@@ -100,6 +100,7 @@ public partial class OCR
         }
         catch (Exception e)
         {
+            log += "Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
         StateHasChanged();
@@ -124,6 +125,7 @@ public partial class OCR
         }
         catch (Exception e)
         {
+            log += "Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
     }     

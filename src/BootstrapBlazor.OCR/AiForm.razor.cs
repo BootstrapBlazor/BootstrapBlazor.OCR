@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.JSInterop;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -50,6 +51,17 @@ public partial class AiForm
     /// </summary>
     [Parameter]
     public bool ShowUI { get; set; }
+
+    /// <summary>
+    /// 获得/设置 表单识别器模型, 默认为 prebuilt-receipt , 可选值为 prebuilt-read, prebuilt-businessCard, prebuilt-idDocument, prebuilt-invoice, prebuilt-licensePlate, prebuilt-passport, prebuilt-receipt, prebuilt-table, prebuilt-trainTicket, prebuilt-whiteboard, prebuilt-document
+    /// <para>参考:https://westus.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-2022-08-31/operations/AnalyzeDocument</para>
+    /// The ID of the model to use for analyzing the input documents. When using a custom built model
+    /// for analysis, this parameter must be the ID attributed to the model during its creation. When
+    /// using one of the service's prebuilt models, one of the supported prebuilt model IDs must be passed.
+    /// Prebuilt model IDs can be found at <see href="https://aka.ms/azsdk/formrecognizer/models"/>.
+    /// </summary>
+    [Parameter]
+    public string ModelId { get; set; } = "prebuilt-receipt";
 
     /// <summary>
     /// 获得/设置 显示log
@@ -94,13 +106,14 @@ public partial class AiForm
         try
         {
             using var stream = efile.OpenReadStream(maxFileSize);
-            var res = await AiFormService!.ReadFileUrl(image: stream);
+            var res = await AiFormService!.AnalyzeDocument(image: stream, modelId: ModelId);
             log = "";
             res.ForEach(a => log += a + Environment.NewLine);
             StateHasChanged();
         }
         catch (Exception e)
         {
+            log +="Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
         StateHasChanged();
@@ -117,7 +130,7 @@ public partial class AiForm
     {
         try
         {
-            var res = await AiFormService!.ReadFileUrl(url);
+            var res = await AiFormService!.AnalyzeDocument(url,modelId: ModelId);
             if (OnResult != null) await OnResult.Invoke(res);
             log = "";
             res.ForEach(a => log += a + Environment.NewLine);
@@ -125,6 +138,7 @@ public partial class AiForm
         }
         catch (Exception e)
         {
+            log += "Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
     }     

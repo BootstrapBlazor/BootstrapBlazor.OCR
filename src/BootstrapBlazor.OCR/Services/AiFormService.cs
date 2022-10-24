@@ -24,6 +24,7 @@ using System.Net;
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using BootstrapBlazor.OCR.Services;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace BootstrapBlazor.Ocr.Services
 {
@@ -52,7 +53,39 @@ namespace BootstrapBlazor.Ocr.Services
         string endpoint = "YOUR_FORM_RECOGNIZER_ENDPOINT";
         string apiKey = "YOUR_FORM_RECOGNIZER_KEY";
 
-        public async Task<List<string>> ReadFileUrl(string? url = null, Stream? image = null)
+        /// <summary>
+        /// 转换 BrowserFileStream 到 MemoryStream
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static async Task<Stream> CopyStream(Stream input)
+        {
+            try
+            {
+            if (input.GetType().Name== "BrowserFileStream")
+            {
+                var output = new MemoryStream();
+                byte[] buffer = new byte[16 * 1024];
+                int read;
+                while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    output.Write(buffer, 0, read);
+                }
+                return output;
+            }
+            else
+            {
+                return input;
+            }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<string>> AnalyzeDocument(string? url = null, Stream? image = null, string modelId = "prebuilt-receipt")
         {
 
             var credential = new AzureKeyCredential(apiKey);
@@ -63,13 +96,14 @@ namespace BootstrapBlazor.Ocr.Services
 
             if (image != null)
             {
-                operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-receipt", image);
+                var ms = await CopyStream(image);
+                operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, modelId, ms);
             }
             else
             {
                 //sample document
                 Uri receiptUri = new Uri(url ?? "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png");
-                operation = await client.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, "prebuilt-receipt", receiptUri);
+                operation = await client.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, modelId, receiptUri);
             }
 
             AnalyzeResult receipts = operation.Value;
