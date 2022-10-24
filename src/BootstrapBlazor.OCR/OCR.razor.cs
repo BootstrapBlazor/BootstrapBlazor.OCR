@@ -92,6 +92,7 @@ public partial class OCR
             if (firstRender)
             {
                 OcrService!.OnResult = OnResult1;
+                OcrService!.Result = OnResult;
                 OcrService.OnStatus = OnStatus;
                 OcrService.OnError = OnError1;
             }
@@ -120,16 +121,19 @@ public partial class OCR
         {
             using var stream = efile.OpenReadStream(maxFileSize);
             var res = await OcrService!.StartOcr(image: stream);
-            log = "";
-            res.ForEach(a => log += a + Environment.NewLine);
-            StateHasChanged();
+            //if (OnResult != null) await OnResult.Invoke(res);
+            if (Debug)
+            {
+                log = "";
+                res.ForEach(a => log += a + Environment.NewLine);
+                StateHasChanged();
+            }
         }
         catch (Exception e)
         {
             log += "Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
-        StateHasChanged();
     } 
     private void oninput(ChangeEventArgs e)
     {
@@ -144,10 +148,13 @@ public partial class OCR
         try
         {
             var res = await OcrService!.StartOcr(url);
-            if (OnResult != null) await OnResult.Invoke(res);
-            log = "";
-            res.ForEach(a => log += a + Environment.NewLine);
-            StateHasChanged();
+            //if (OnResult != null) await OnResult.Invoke(res);
+            if (Debug)
+            {
+                log = "";
+                res.ForEach(a => log += a + Environment.NewLine);
+                StateHasChanged();
+            }
         }
         catch (Exception e)
         {
@@ -161,7 +168,8 @@ public partial class OCR
     /// </summary>
     [Parameter]
     public Func<string, Task>? OnError { get; set; }
-  
+
+    
     private async Task OnResult1(List<ReadResult> models)
     {
         this.Results = models;

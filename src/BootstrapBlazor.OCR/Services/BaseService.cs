@@ -16,7 +16,7 @@ namespace BootstrapBlazor.OCR.Services
     {
 
         /// <summary>
-        /// 获得/设置 识别完成回调方法
+        /// 获得/设置 识别完成回调方法,返回 Model 集合
         /// </summary>
         public Func<List<Model>, Task>? OnResult { get; set; }
 

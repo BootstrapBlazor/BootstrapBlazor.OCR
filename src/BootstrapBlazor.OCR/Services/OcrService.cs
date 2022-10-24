@@ -24,6 +24,7 @@ using System.Net;
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using BootstrapBlazor.OCR.Services;
+using System.Reflection;
 
 namespace BootstrapBlazor.Ocr.Services
 {
@@ -60,7 +61,23 @@ namespace BootstrapBlazor.Ocr.Services
         // URL image for detecting domain-specific content (image of ancient ruins)
         private const string DETECT_DOMAIN_SPECIFIC_URL = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg";
 
-        
+        /// <summary>
+        /// 获得/设置 识别完成回调方法,结果为string集合
+        /// </summary>
+        public Func<List<string>, Task>? Result { get; set; }
+
+        async Task GetResult(List<string> models)
+        {
+            try
+            {
+                Console.WriteLine(models);
+                if (Result != null) await Result.Invoke(models);
+            }
+            catch (Exception e)
+            {
+                if (OnError != null) await OnError.Invoke(e.Message);
+            }
+        }
 
         public async Task<List<string>> StartOcr(string? url=null, Stream? image = null)
         {
@@ -157,6 +174,7 @@ namespace BootstrapBlazor.Ocr.Services
                 }
             }
             Console.WriteLine();
+            await GetResult(res);
             return res;
 
         }
@@ -214,6 +232,7 @@ namespace BootstrapBlazor.Ocr.Services
                 }
             }
             Console.WriteLine();
+            await GetResult(res);
             return res;
         }
 

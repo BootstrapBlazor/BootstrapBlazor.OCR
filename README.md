@@ -30,7 +30,17 @@ https://blazor.app1.es/ocr
     ```
     @using BootstrapBlazor.Components
     
-    <OCR ShowUI="true" Debug="true" />
+    <OCR ShowUI="true" ShowUI_Capture="true" Debug="true" OnResult="OnResult" />
+
+    @code{
+        List<string> res { get; set; }
+        private Task OnResult(List<string> res)
+        {
+            this.res = res;
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
+    }
  
     ```
 
@@ -80,8 +90,18 @@ https://blazor.app1.es/ocr
     ```
     @using BootstrapBlazor.Components
     
-    <OCR ShowUI="true" Debug="true" />
- 
+    <OCR ShowUI="true" ShowUI_Capture="true" Debug="true" OnResult="OnResult" />
+
+    @code{
+        List<string> res { get; set; }
+        private Task OnResult(List<string> res)
+        {
+            this.res = res;
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
+    }
+    
     ```
     
 
