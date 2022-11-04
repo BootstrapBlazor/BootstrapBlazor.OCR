@@ -20,11 +20,18 @@
     
     <ItemGroup>
         <PackageReference Include="Azure.AI.FormRecognizer" Version="4.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
         <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     </ItemGroup>
-    
+    <!-- 通过移除正常的引用并替换成固定版本的引用，达到无论如何更新都无法生效的目的。 -->
+    <Target Name="ReferenceStaticLegacyPackage" BeforeTargets="CollectPackageReferences">
+        <ItemGroup>
+            <PackageReference Remove="Microsoft.AspNetCore.Components.Web" />
+            <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+        </ItemGroup>
+    </Target>
+
     <ItemGroup>
       <Content Update="wwwroot\images\celebrities.jpg">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
