@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
-        <TargetFrameworks>net6.0</TargetFrameworks>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>102ba2ce-c240-49cd-a064-deee597f8998</UserSecretsId>
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>6.2.4</Version>
+        <Version>7.0.0</Version>
         <PackageProjectUrl>https://github.com/densen2014/BootstrapBlazor.OCR</PackageProjectUrl>
         <RepositoryUrl>https://github.com/densen2014/BootstrapBlazor.OCR</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
@@ -18,19 +18,30 @@
         <AssemblyOriginatorKeyFile>..\keys\Longbow.Utility.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
     
-    <ItemGroup>
-        <PackageReference Include="Azure.AI.FormRecognizer" Version="4.0.0" />
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
-        <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0" />
+    </ItemGroup>
+
     <!-- 通过移除正常的引用并替换成固定版本的引用，达到无论如何更新都无法生效的目的。 -->
-    <Target Name="ReferenceStaticLegacyPackage" BeforeTargets="CollectPackageReferences">
+    <Target Condition="'$(TargetFramework)' == 'net6.0'" Name="ReferenceStaticLegacyPackage" BeforeTargets="CollectPackageReferences">
         <ItemGroup>
             <PackageReference Remove="Microsoft.AspNetCore.Components.Web" />
-            <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+            <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0" />
         </ItemGroup>
     </Target>
+    
+    <ItemGroup>
+        <PackageReference Include="Azure.AI.FormRecognizer" Version="4.0.0" /> 
+        <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" /> 
+    </ItemGroup> 
 
     <ItemGroup>
       <Content Update="wwwroot\images\celebrities.jpg">
