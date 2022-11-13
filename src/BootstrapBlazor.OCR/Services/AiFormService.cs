@@ -31,10 +31,11 @@ namespace BootstrapBlazor.Ocr.Services
 
     public class AiFormService : BaseService<AnalyzedDocument>
     {
+        public AiFormService() { }
         public AiFormService(string key, string url)
         {
-            apiKey = key;
-            endpoint = url;
+            SubscriptionKey = key;
+            Endpoint = url;
         }
 
         /*
@@ -50,8 +51,8 @@ namespace BootstrapBlazor.Ocr.Services
           secure methods to store and access your credentials. For more information, see 
           https://docs.microsoft.com/en-us/azure/cognitive-services/cognitive-services-security?tabs=command-line%2Ccsharp#environment-variables-and-application-configuration
         */
-        string endpoint = "YOUR_FORM_RECOGNIZER_ENDPOINT";
-        string apiKey = "YOUR_FORM_RECOGNIZER_KEY";
+        public string Endpoint = "YOUR_FORM_RECOGNIZER_ENDPOINT";
+        public string SubscriptionKey = "YOUR_FORM_RECOGNIZER_KEY";
 
         /// <summary>
         /// 转换 BrowserFileStream 到 MemoryStream
@@ -88,8 +89,8 @@ namespace BootstrapBlazor.Ocr.Services
         public async Task<List<string>> AnalyzeDocument(string? url = null, Stream? image = null, string modelId = "prebuilt-receipt")
         {
 
-            var credential = new AzureKeyCredential(apiKey);
-            var client = new DocumentAnalysisClient(new Uri(endpoint), credential);
+            var credential = new AzureKeyCredential(SubscriptionKey);
+            var client = new DocumentAnalysisClient(new Uri(Endpoint), credential);
 
 
             AnalyzeDocumentOperation operation;

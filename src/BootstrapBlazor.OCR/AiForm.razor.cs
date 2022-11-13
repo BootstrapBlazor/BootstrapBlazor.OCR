@@ -12,6 +12,7 @@ using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.JSInterop;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Reflection;
 
 namespace BootstrapBlazor.Components;
@@ -67,8 +68,20 @@ public partial class AiForm
     /// 获得/设置 显示log
     /// </summary>
     [Parameter]
-    public bool Debug { get; set; } 
-    
+    public bool Debug { get; set; }
+
+    /// <summary>
+    /// 获得/设置 key
+    /// </summary>
+    [Parameter]
+    public string? Key { get; set; }
+
+    /// <summary>
+    /// 获得/设置 Endpoint
+    /// </summary>
+    [Parameter]
+    public string? Endpoint { get; set; }
+
     protected string? uploadstatus;
     long maxFileSize = 1024 * 1024 * 15;
     public List<AnalyzedDocument>? Results { get; set; }
@@ -78,6 +91,8 @@ public partial class AiForm
         {
             if (firstRender)
             {
+                if (Key != null) AiFormService!.SubscriptionKey = Key;
+                if (Endpoint != null) AiFormService!.Endpoint = Endpoint;
                 AiFormService!.OnResult = OnResult1;
                 AiFormService.OnStatus = OnStatus;
                 AiFormService.OnError = OnError1;

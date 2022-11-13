@@ -80,8 +80,20 @@ public partial class OCR
     /// 获得/设置 显示log
     /// </summary>
     [Parameter]
-    public bool Debug { get; set; } 
-    
+    public bool Debug { get; set; }
+
+    /// <summary>
+    /// 获得/设置 key
+    /// </summary>
+    [Parameter]
+    public string? Key { get; set; }
+
+    /// <summary>
+    /// 获得/设置 Endpoint
+    /// </summary>
+    [Parameter]
+    public string? Endpoint { get; set; }
+
     protected string? uploadstatus;
     long maxFileSize = 1024 * 1024 * 15;
     public List<ReadResult>? Results { get; set; }
@@ -91,6 +103,8 @@ public partial class OCR
         {
             if (firstRender)
             {
+                if (Key != null) OcrService!.SubscriptionKey = Key;
+                if (Endpoint != null) OcrService!.Endpoint = Endpoint; 
                 OcrService!.OnResult = OnResult1;
                 OcrService!.Result = OnResult;
                 OcrService.OnStatus = OnStatus;

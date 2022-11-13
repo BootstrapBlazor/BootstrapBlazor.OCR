@@ -31,16 +31,18 @@ namespace BootstrapBlazor.Ocr.Services
 
     public class OcrService: BaseService<ReadResult>
     {
+        public OcrService() { }
+        
         public OcrService(string key, string url)
         {
-            subscriptionKey = key;
-            endpoint = url;
+            SubscriptionKey = key;
+            Endpoint = url;
         }
 
         //https://learn.microsoft.com/zh-cn/azure/cognitive-services/computer-vision/quickstarts-sdk/client-library?tabs=visual-studio&pivots=programming-language-csharp
         // Add your Computer Vision subscription key and endpoint
-        string subscriptionKey = "your Computer Vision subscription key";
-        string endpoint = "https://xxx.cognitiveservices.azure.com/";
+        public string SubscriptionKey = "your Computer Vision subscription key";
+        public string Endpoint = "https://xxx.cognitiveservices.azure.com/";
 
         private const string READ_TEXT_URL_IMAGE = "https://freepos.es/uploads/demo/Doc/libai.jpg";
 
@@ -85,7 +87,7 @@ namespace BootstrapBlazor.Ocr.Services
             await GetStatus(msg);
             Console.WriteLine();
 
-            ComputerVisionClient client = Authenticate(endpoint, subscriptionKey);
+            ComputerVisionClient client = Authenticate(Endpoint, SubscriptionKey);
 
             //// Analyze an image to get features and other properties.
             //await AnalyzeImageUrl(client, ANALYZE_URL_IMAGE);

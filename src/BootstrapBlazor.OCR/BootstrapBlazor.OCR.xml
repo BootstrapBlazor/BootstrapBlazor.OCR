@@ -44,6 +44,16 @@
             获得/设置 显示log
             </summary>
         </member>
+        <member name="P:BootstrapBlazor.Components.AiForm.Key">
+            <summary>
+            获得/设置 key
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.AiForm.Endpoint">
+            <summary>
+            获得/设置 Endpoint
+            </summary>
+        </member>
         <member name="M:BootstrapBlazor.Components.AiForm.GetOCR">
             <summary>
             识别文字
@@ -102,6 +112,16 @@
         <member name="P:BootstrapBlazor.Components.OCR.Debug">
             <summary>
             获得/设置 显示log
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.Key">
+            <summary>
+            获得/设置 key
+            </summary>
+        </member>
+        <member name="P:BootstrapBlazor.Components.OCR.Endpoint">
+            <summary>
+            获得/设置 Endpoint
             </summary>
         </member>
         <member name="M:BootstrapBlazor.Components.OCR.GetOCR">
