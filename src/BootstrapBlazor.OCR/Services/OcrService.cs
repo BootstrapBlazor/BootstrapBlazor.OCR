@@ -31,13 +31,18 @@ namespace BootstrapBlazor.Ocr.Services
 
     public class OcrService: BaseService<ReadResult>
     {
-        public OcrService() { }
-        
-        public OcrService(string key, string url)
+        public OcrService(string localFilePath)
         {
+            LocalFilePath = localFilePath;
+        }
+
+        public OcrService(string key, string url, string localFilePath)
+        {
+            LocalFilePath = localFilePath;
             SubscriptionKey = key;
             Endpoint = url;
         }
+        public string LocalFilePath ;
 
         //https://learn.microsoft.com/zh-cn/azure/cognitive-services/computer-vision/quickstarts-sdk/client-library?tabs=visual-studio&pivots=programming-language-csharp
         // Add your Computer Vision subscription key and endpoint
@@ -81,9 +86,41 @@ namespace BootstrapBlazor.Ocr.Services
             }
         }
 
-        public async Task<List<string>> StartOcr(string? url=null, Stream? image = null)
+        /// <summary>
+        /// 转换 BrowserFileStream 到 MemoryStream
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static async Task<Stream> CopyStream(Stream input)
         {
-            msg = "Azure Cognitive Services Computer Vision - .NET quickstart example";
+            try
+            {
+                if (input.GetType().Name == "BrowserFileStream")
+                {
+                    var output = new MemoryStream();
+                    byte[] buffer = new byte[16 * 1024];
+                    int read;
+                    while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        output.Write(buffer, 0, read);
+                    }
+                    return output;
+                }
+                else
+                {
+                    return input;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<string>> StartOcr(string? url=null, Stream? image = null )
+        {
+            msg = "Ocr start";
             await GetStatus(msg);
             Console.WriteLine();
 
@@ -108,8 +145,26 @@ namespace BootstrapBlazor.Ocr.Services
             // Extract text (OCR) from a local image using the Read API
             if (image != null)
             {
-                var res1 = await ReadFileLocal(client, url ?? READ_TEXT_LOCAL_IMAGE, image);
-                return res1;
+#if (IOS || MACCATALYST)
+                var ms = await CopyStream(image);
+                var res1 = await ReadFileLocal(client, url ?? READ_TEXT_LOCAL_IMAGE, ms);
+#else
+                if (LocalFilePath!=null)
+                {
+                    var tempfilename = Path.Combine(LocalFilePath, "temp.jpg");
+                    await using FileStream fs = new(tempfilename, FileMode.Create); 
+                    await image.CopyToAsync(fs);
+                    var res1 = await ReadFileLocal(client, tempfilename);
+                    return res1;
+
+                }
+                else
+                {
+                    var res1 = await ReadFileLocal(client, url ?? READ_TEXT_LOCAL_IMAGE, image);
+                    return res1;
+                }
+
+#endif
 
             }
             else

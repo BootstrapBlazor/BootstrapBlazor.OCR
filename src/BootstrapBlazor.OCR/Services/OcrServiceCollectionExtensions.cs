@@ -19,12 +19,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services"></param>
         /// <param name="key"></param>
-        /// <param name="url"></param> 
+        /// <param name="url"></param>
+        /// <param name="localFilePath"></param> 
         /// <returns></returns>
-        public static IServiceCollection AddOcrExtensions(this IServiceCollection services,string? key=null,string? url = null)
+        public static IServiceCollection AddOcrExtensions(this IServiceCollection services,string? key=null,string? url = null,string? localFilePath=null)
         {
-            if (key!=null && url!=null) services.AddTransient(sp => new OcrService(key,url));
-            else services.AddTransient(sp => new OcrService());
+            if (key!=null && url!=null) services.AddTransient(sp => new OcrService(key,url, localFilePath));
+            else services.AddTransient(sp => new OcrService(localFilePath));
             return services;
         }
 

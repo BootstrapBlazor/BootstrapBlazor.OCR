@@ -88,6 +88,8 @@ namespace BootstrapBlazor.Ocr.Services
 
         public async Task<List<string>> AnalyzeDocument(string? url = null, Stream? image = null, string modelId = "prebuilt-receipt")
         {
+            msg = "AnalyzeDocument start ";
+            await GetStatus(msg);
 
             var credential = new AzureKeyCredential(SubscriptionKey);
             var client = new DocumentAnalysisClient(new Uri(Endpoint), credential);
