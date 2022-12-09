@@ -4,27 +4,9 @@
 // e-mail:zhouchuanglin@gmail.com 
 // **********************************
 
-using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
-using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Threading;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
-using System.Net;
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using BootstrapBlazor.OCR.Services;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace BootstrapBlazor.Ocr.Services
 {
