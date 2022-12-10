@@ -7,6 +7,7 @@
 using BootstrapBlazor.OCR.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -15,6 +16,14 @@ namespace BootstrapBlazor.Ocr.Services
 
     public class OcrService: BaseService<ReadResult>
     {
+        private readonly IConfiguration? _config;
+        public OcrService(IConfiguration? _config)
+        {
+            this._config = _config;
+            SubscriptionKey = _config!["AzureCvKey"];
+            Endpoint = _config!["AzureCvUrl"];
+        }
+
         public OcrService(string localFilePath)
         {
             LocalFilePath = localFilePath;
