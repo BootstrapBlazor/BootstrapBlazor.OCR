@@ -16,10 +16,8 @@ namespace BootstrapBlazor.Ocr.Services
 
     public class OcrService: BaseService<ReadResult>
     {
-        private readonly IConfiguration? _config;
         public OcrService(IConfiguration? _config)
         {
-            this._config = _config;
             SubscriptionKey = _config!["AzureCvKey"];
             Endpoint = _config!["AzureCvUrl"];
         }

@@ -25,7 +25,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddOcrExtensions(this IServiceCollection services,string? key=null,string? url = null,string? localFilePath=null)
         {
             if (key!=null && url!=null) services.AddTransient(sp => new OcrService(key,url, localFilePath));
-            else services.AddTransient(sp => new OcrService(localFilePath));
+            else if (localFilePath != null) services.AddTransient(sp => new OcrService(localFilePath));
+            else services.AddTransient<OcrService>();
             return services;
         }
 

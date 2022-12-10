@@ -7,13 +7,19 @@
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using BootstrapBlazor.OCR.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace BootstrapBlazor.Ocr.Services
 {
 
     public class AiFormService : BaseService<AnalyzedDocument>
     {
-        public AiFormService() { }
+        public AiFormService(IConfiguration? _config)
+        {
+            SubscriptionKey = _config!["AzureCvKey"];
+            Endpoint = _config!["AzureCvUrl"];
+        }
+
         public AiFormService(string key, string url)
         {
             SubscriptionKey = key;

@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddAIFormExtensions(this IServiceCollection services, string? key = null, string? url = null)
         {
             if (key != null && url != null) services.AddTransient(sp => new AiFormService(key, url));
-            else services.AddTransient(sp => new AiFormService());
+            else services.AddTransient<AiFormService>();
             return services;
         }
 
