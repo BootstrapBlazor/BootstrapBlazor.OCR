@@ -14,12 +14,16 @@ using Newtonsoft.Json.Linq;
 namespace BootstrapBlazor.Ocr.Services
 {
 
-    public class OcrService: BaseService<ReadResult>
+    public class OcrService : BaseService<ReadResult>
     {
-        public OcrService(IConfiguration? _config)
+        public string? LocalFilePath;
+        public OcrService(IConfiguration? config)
         {
-            SubscriptionKey = _config!["AzureCvKey"];
-            Endpoint = _config!["AzureCvUrl"];
+            if (config != null)
+            {
+                SubscriptionKey = config["AzureCvKey"] ?? "";
+                Endpoint = config["AzureCvUrl"] ?? "";
+            }
         }
 
         public OcrService(string localFilePath)
@@ -33,7 +37,6 @@ namespace BootstrapBlazor.Ocr.Services
             SubscriptionKey = key;
             Endpoint = url;
         }
-        public string LocalFilePath ;
 
         //https://learn.microsoft.com/zh-cn/azure/cognitive-services/computer-vision/quickstarts-sdk/client-library?tabs=visual-studio&pivots=programming-language-csharp
         // Add your Computer Vision subscription key and endpoint
@@ -109,7 +112,7 @@ namespace BootstrapBlazor.Ocr.Services
             }
         }
 
-        public async Task<List<string>> StartOcr(string? url=null, Stream? image = null )
+        public async Task<List<string>> StartOcr(string? url = null, Stream? image = null)
         {
             msg = "Ocr start";
             await GetStatus(msg);
@@ -140,10 +143,10 @@ namespace BootstrapBlazor.Ocr.Services
                 var ms = await CopyStream(image);
                 var res1 = await ReadFileLocal(client, url ?? READ_TEXT_LOCAL_IMAGE, ms);
 #else
-                if (LocalFilePath!=null)
+                if (LocalFilePath != null)
                 {
                     var tempfilename = Path.Combine(LocalFilePath, "temp.jpg");
-                    await using FileStream fs = new(tempfilename, FileMode.Create); 
+                    await using FileStream fs = new(tempfilename, FileMode.Create);
                     await image.CopyToAsync(fs);
                     var res1 = await ReadFileLocal(client, tempfilename);
                     return res1;
@@ -212,7 +215,7 @@ namespace BootstrapBlazor.Ocr.Services
             var res = new List<string>();
             var textUrlFileResults = results.AnalyzeResult.ReadResults;
             await GetStatus("end");
-            await GetResult(textUrlFileResults.ToList());           
+            await GetResult(textUrlFileResults.ToList());
             foreach (ReadResult page in textUrlFileResults)
             {
                 foreach (Line line in page.Lines)

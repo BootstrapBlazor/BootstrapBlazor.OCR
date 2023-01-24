@@ -14,10 +14,13 @@ namespace BootstrapBlazor.Ocr.Services
 
     public class AiFormService : BaseService<AnalyzedDocument>
     {
-        public AiFormService(IConfiguration? _config)
+        public AiFormService(IConfiguration? config)
         {
-            SubscriptionKey = _config!["AzureCvKey"];
-            Endpoint = _config!["AzureCvUrl"];
+            if (config != null)
+            {
+                SubscriptionKey = config["AzureCvKey"] ?? "";
+                Endpoint = config["AzureCvUrl"] ?? "";
+            }
         }
 
         public AiFormService(string key, string url)
@@ -51,21 +54,21 @@ namespace BootstrapBlazor.Ocr.Services
         {
             try
             {
-            if (input.GetType().Name== "BrowserFileStream")
-            {
-                var output = new MemoryStream();
-                byte[] buffer = new byte[16 * 1024];
-                int read;
-                while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                if (input.GetType().Name == "BrowserFileStream")
                 {
-                    output.Write(buffer, 0, read);
+                    var output = new MemoryStream();
+                    byte[] buffer = new byte[16 * 1024];
+                    int read;
+                    while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        output.Write(buffer, 0, read);
+                    }
+                    return output;
                 }
-                return output;
-            }
-            else
-            {
-                return input;
-            }
+                else
+                {
+                    return input;
+                }
             }
             catch (Exception e)
             {
@@ -106,7 +109,7 @@ namespace BootstrapBlazor.Ocr.Services
             var res = new List<string>();
             foreach (AnalyzedDocument receipt in receipts.Documents)
             {
-                if (receipt.Fields.TryGetValue("MerchantName", out DocumentField merchantNameField))
+                if (receipt.Fields.TryGetValue("MerchantName", out DocumentField? merchantNameField))
                 {
                     if (merchantNameField.FieldType == DocumentFieldType.String)
                     {
@@ -119,7 +122,7 @@ namespace BootstrapBlazor.Ocr.Services
                     }
                 }
 
-                if (receipt.Fields.TryGetValue("TransactionDate", out DocumentField transactionDateField))
+                if (receipt.Fields.TryGetValue("TransactionDate", out DocumentField? transactionDateField))
                 {
                     if (transactionDateField.FieldType == DocumentFieldType.Date)
                     {
@@ -132,7 +135,7 @@ namespace BootstrapBlazor.Ocr.Services
                     }
                 }
 
-                if (receipt.Fields.TryGetValue("Items", out DocumentField itemsField))
+                if (receipt.Fields.TryGetValue("Items", out DocumentField? itemsField))
                 {
                     if (itemsField.FieldType == DocumentFieldType.List)
                     {
@@ -146,7 +149,7 @@ namespace BootstrapBlazor.Ocr.Services
                             {
                                 IReadOnlyDictionary<string, DocumentField> itemFields = itemField.Value.AsDictionary();
 
-                                if (itemFields.TryGetValue("Description", out DocumentField itemDescriptionField))
+                                if (itemFields.TryGetValue("Description", out DocumentField? itemDescriptionField))
                                 {
                                     if (itemDescriptionField.FieldType == DocumentFieldType.String)
                                     {
@@ -159,7 +162,7 @@ namespace BootstrapBlazor.Ocr.Services
                                     }
                                 }
 
-                                if (itemFields.TryGetValue("TotalPrice", out DocumentField itemTotalPriceField))
+                                if (itemFields.TryGetValue("TotalPrice", out DocumentField? itemTotalPriceField))
                                 {
                                     if (itemTotalPriceField.FieldType == DocumentFieldType.Double)
                                     {
@@ -176,7 +179,7 @@ namespace BootstrapBlazor.Ocr.Services
                     }
                 }
 
-                if (receipt.Fields.TryGetValue("Total", out DocumentField totalField))
+                if (receipt.Fields.TryGetValue("Total", out DocumentField? totalField))
                 {
                     if (totalField.FieldType == DocumentFieldType.Double)
                     {
