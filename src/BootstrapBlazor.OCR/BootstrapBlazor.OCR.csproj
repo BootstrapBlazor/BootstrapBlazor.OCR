@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>7.0.6</Version>
+        <Version>7.0.7</Version>
         <PackageProjectUrl>https://github.com/densen2014/BootstrapBlazor.OCR</PackageProjectUrl>
         <RepositoryUrl>https://github.com/densen2014/BootstrapBlazor.OCR</RepositoryUrl>
         <RepositoryType>git</RepositoryType>

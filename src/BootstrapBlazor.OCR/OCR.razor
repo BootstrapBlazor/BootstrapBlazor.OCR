@@ -31,9 +31,9 @@
 {
     <label>输入URL识别在线图片</label>
     <br />
-    <input @bind-value="url" @bind-value:event="oninput" style="width: 90%; max-width: 550px; " />
+    <input @bind-value="URL" @bind-value:event="oninput" style="width: 90%; max-width: 550px; " />
     <br />
-    <img src="@url" style="height: 100px; width: 100px; " />
+    <img src="@URL" style="height: 100px; width: 100px; " />
     <hr style="width: 90%; max-width: 550px; " />
     <button class="btn btn-outline-secondary" onclick="@(async() =>await GetOCR())">@OcrUrlButtonText</button>
 }

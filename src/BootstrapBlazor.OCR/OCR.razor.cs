@@ -8,9 +8,7 @@ using BootstrapBlazor.Ocr.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
-using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace BootstrapBlazor.Components;
 
@@ -19,7 +17,7 @@ namespace BootstrapBlazor.Components;
 /// </summary>
 public partial class OCR
 {
-    public string url { get; set; } = "https://freepos.es/uploads/demo/Doc/libai.jpg";
+    public string URL { get; set; } = "https://freepos.es/uploads/demo/Doc/libai.jpg";
     string? log;
     string? log2;
     [Inject] OcrService? OcrService { get; set; }
@@ -95,8 +93,11 @@ public partial class OCR
     public string? Endpoint { get; set; }
 
     protected string? uploadstatus;
+
     long maxFileSize = 1024 * 1024 * 15;
+
     public List<ReadResult>? Results { get; set; }
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         try
@@ -116,6 +117,7 @@ public partial class OCR
             if (OnError != null) await OnError.Invoke(e.Message);
         }
     }
+    
     protected async Task OnChange(InputFileChangeEventArgs e)
     {
         int i = 0;
@@ -148,21 +150,48 @@ public partial class OCR
             log += "Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
-    } 
-    private void oninput(ChangeEventArgs e)
-    {
-        url = e.Value?.ToString()??"";
     }
     
+    private void oninput(ChangeEventArgs e)
+    {
+        URL = e.Value?.ToString()??"";
+    }
+
     /// <summary>
     /// 识别文字
     /// </summary>
-    public virtual async Task GetOCR()
+    public virtual async Task GetOCR() => await GetOCR(null);
+    
+    /// <summary>
+    /// 识别 url 文字
+    /// </summary>
+    public virtual async Task GetOCR(string? url)
     {
         try
         {
-            var res = await OcrService!.StartOcr(url);
-            //if (OnResult != null) await OnResult.Invoke(res);
+            var res = await OcrService!.StartOcr(url??this.URL);
+            if (Debug)
+            {
+                log = "";
+                res.ForEach(a => log += a + Environment.NewLine);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            log += "Error:" + e.Message + Environment.NewLine;
+            if (OnError != null) await OnError.Invoke(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// 识别 Stream 内的文字
+    /// </summary>
+    public virtual async Task OCRFromStream(Stream stream)
+    {
+        try
+        {
+            var res = await OcrService!.StartOcr(image: stream);
             if (Debug)
             {
                 log = "";
