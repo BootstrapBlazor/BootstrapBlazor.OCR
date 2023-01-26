@@ -5,7 +5,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>102ba2ce-c240-49cd-a064-deee597f8998</UserSecretsId>
     </PropertyGroup>
-
+    
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageIcon>logo.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <NoWarn>1701;1702;1705;1591</NoWarn>
+    </PropertyGroup>
+    
     <PropertyGroup>
         <Version>7.0.8</Version>
         <PackageProjectUrl>https://github.com/densen2014/BootstrapBlazor.OCR</PackageProjectUrl>

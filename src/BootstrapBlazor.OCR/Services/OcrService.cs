@@ -4,6 +4,7 @@
 // e-mail:zhouchuanglin@gmail.com 
 // **********************************
 
+using BootstrapBlazor.OCR;
 using BootstrapBlazor.OCR.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
@@ -15,42 +16,22 @@ namespace BootstrapBlazor.Ocr.Services
     public partial class OcrService : BaseService<ReadResult>
     {
         public string? LocalFilePath;
-        
+
         //https://learn.microsoft.com/zh-cn/azure/cognitive-services/computer-vision/quickstarts-sdk/client-library?tabs=visual-studio&pivots=programming-language-csharp
         // 添加您的计算机视觉订阅密钥和端点
-        
+
         public string SubscriptionKey = "your Computer Vision subscription key";
-        
+
         public string Endpoint = "https://xxx.cognitiveservices.azure.com/";
 
-        private const string READ_TEXT_URL_IMAGE = "https://freepos.es/uploads/demo/Doc/libai.jpg";
-
-        private const string LOCAL_IMAGE = "C:\\Repos\\BootstrapBlazor.OCR\\src\\BootstrapBlazor.OCR\\wwwroot\\images\\";
-
-        private const string READ_TEXT_LOCAL_IMAGE = LOCAL_IMAGE + "libai.jpg";
-        
-        private const string READ_TEXT_LOCAL_IMAGE1 = LOCAL_IMAGE + "printed_text.jpg";
-
-        private const string ANALYZE_LOCAL_IMAGE = LOCAL_IMAGE + "celebrities.jpg";
-        
-        private const string DETECT_LOCAL_IMAGE = LOCAL_IMAGE + "objects.jpg";
-        
-        private const string DETECT_DOMAIN_SPECIFIC_LOCAL = LOCAL_IMAGE + "celebrities.jpg";
-
-        // 用于分析图像的 URL 图像（小狗的图像）
-        private const string ANALYZE_URL_IMAGE = "https://moderatorsampleimages.blob.core.windows.net/samples/sample16.png";
-        
-        // 用于检测物体的URL图像（滑板上的人的图像）
-        private const string DETECT_URL_IMAGE = "https://moderatorsampleimages.blob.core.windows.net/samples/sample9.png";
-        
-        // 用于检测特定领域内容的 URL 图片（古遗址图片）
-        private const string DETECT_DOMAIN_SPECIFIC_URL = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg";
+        //public Stream? Stream { get; set; }
+        public string? Tempfilename { get; set; }
 
         /// <summary>
         /// 获得/设置 识别完成回调方法,结果为string集合
         /// </summary>
         public Func<List<string>, Task>? Result { get; set; }
-        
+
         public OcrService(IConfiguration? config)
         {
             if (config != null)
@@ -72,8 +53,14 @@ namespace BootstrapBlazor.Ocr.Services
             Endpoint = url;
         }
 
-        public ComputerVisionClient Client { get => Client ?? OcrService.Authenticate(Endpoint, SubscriptionKey); }
-            
+        ComputerVisionClient? client_;
+
+        public ComputerVisionClient Client
+        {
+            get => client_ = client_ ?? Authenticate(Endpoint, SubscriptionKey);
+            set => client_ = value;
+        }
+
         /// <summary>
         /// 转换和提取结果
         /// </summary>
@@ -91,37 +78,38 @@ namespace BootstrapBlazor.Ocr.Services
                 if (OnError != null) await OnError.Invoke(e.Message);
             }
         }
-        
+
         /// <summary>
         /// 从图像中提取文本 (OCR)
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="image"></param>
+        /// <param name="stream"></param>
         /// <returns></returns>
-        public async Task<List<string>> StartOcr(string? url = null, Stream? image = null)
+        public async Task<List<string>> StartOcr(string? url = null, Stream? stream = null)
         {
             msg = "Ocr start";
             await GetStatus(msg);
             Console.WriteLine();
-            
-            if (image != null)
+            Tempfilename = null;
+
+            if (stream != null)
             {
 #if (IOS || MACCATALYST)
-                var ms = await CopyStream(image);
-                var res1 = await ReadFileLocal(client, url ?? READ_TEXT_LOCAL_IMAGE, ms);
+                var ms = await CopyStream(stream);
+                var res1 = await ReadFileLocal(url ?? "", ms);
 #else
                 if (LocalFilePath != null)
                 {
-                    var tempfilename = Path.Combine(LocalFilePath, "temp.jpg");
-                    await using FileStream fs = new(tempfilename, FileMode.Create);
-                    await image.CopyToAsync(fs);
-                    var res1 = await ReadFileLocal(Client, tempfilename);
+                    Tempfilename = Path.Combine(LocalFilePath, "temp.jpg");
+                    await using FileStream fs = new(Tempfilename, FileMode.Create);
+                    await stream.CopyToAsync(fs);
+                    var res1 = await OcrLocal(Tempfilename);
                     return res1;
 
                 }
                 else
                 {
-                    var res1 = await ReadFileLocal(Client, url ?? READ_TEXT_LOCAL_IMAGE, image);
+                    var res1 = await OcrLocal(url ?? "", stream);
                     return res1;
                 }
 
@@ -131,11 +119,34 @@ namespace BootstrapBlazor.Ocr.Services
             else
             {
                 // 使用读取 API 从 URL 图像中提取文本 (OCR)
-                var res = await ReadFileUrl(Client, url ?? READ_TEXT_URL_IMAGE);
+                var res = await OcrUrl(url ?? "");
                 return res;
 
             }
 
+        }
+
+
+
+        /// <summary>
+        /// 暂存图片流
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public async Task CopyStreamAsync(Stream stream)
+        {
+            msg = "Save a stream";
+            await GetStatus(msg);
+            try
+            {
+                Tempfilename = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
+                await using FileStream fs = new(Tempfilename, FileMode.Create);
+                await stream.CopyToAsync(fs);
+            }
+            catch
+            {
+                Tempfilename = null;
+            }
         }
 
         /// <summary>
@@ -144,7 +155,7 @@ namespace BootstrapBlazor.Ocr.Services
         /// <param name="endpoint"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static ComputerVisionClient Authenticate(string endpoint, string key)
+        public ComputerVisionClient Authenticate(string endpoint, string key)
         {
             ComputerVisionClient client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(key)) { Endpoint = endpoint };
             return client;
@@ -156,7 +167,7 @@ namespace BootstrapBlazor.Ocr.Services
         /// <param name="client"></param>
         /// <param name="urlFile"></param>
         /// <returns></returns>
-        public async Task<List<string>> ReadFileUrl(ComputerVisionClient client, string urlFile)
+        public async Task<List<string>> OcrUrl(string urlFile)
         {
             Console.WriteLine("----------------------------------------------------------");
             msg = "从 URL 提取文本";
@@ -164,7 +175,7 @@ namespace BootstrapBlazor.Ocr.Services
             Console.WriteLine();
 
             // 从 URL 读取文本
-            var textHeaders = await client.ReadAsync(urlFile);
+            var textHeaders = await Client.ReadAsync(urlFile);
             // 请求后，获取操作位置（操作ID）
             string operationLocation = textHeaders.OperationLocation;
             Thread.Sleep(2000);
@@ -181,7 +192,7 @@ namespace BootstrapBlazor.Ocr.Services
             Console.WriteLine();
             do
             {
-                results = await client.GetReadResultAsync(Guid.Parse(operationId));
+                results = await Client.GetReadResultAsync(Guid.Parse(operationId));
                 msg = $"{results.Status}...";
                 await GetStatus(msg);
             }
@@ -214,17 +225,17 @@ namespace BootstrapBlazor.Ocr.Services
         /// </summary>
         /// <param name="client"></param>
         /// <param name="localFile"></param>
-        /// <param name="image"></param>
+        /// <param name="stream"></param>
         /// <returns></returns>
-        public async Task<List<string>> ReadFileLocal(ComputerVisionClient client, string localFile, Stream? image = null)
+        public async Task<List<string>> OcrLocal(string localFile, Stream? stream = null)
         {
             Console.WriteLine("----------------------------------------------------------");
-            msg = image!=null ? "从流提取文本" : "从本地文件提取文本";
+            msg = stream != null ? "从流提取文本" : "从本地文件提取文本";
             await GetStatus(msg);
             Console.WriteLine();
 
             // 从 URL 读取文本
-            var textHeaders = await client.ReadInStreamAsync(image ?? File.OpenRead(localFile));
+            var textHeaders = await Client.ReadInStreamAsync(stream ?? File.OpenRead(localFile));
             // 请求后，获取操作位置（操作 operation ID）
             string operationLocation = textHeaders.OperationLocation;
             Thread.Sleep(2000);
@@ -237,12 +248,12 @@ namespace BootstrapBlazor.Ocr.Services
 
             // 提取文本
             ReadOperationResult results;
-            msg = image != null ? "从流提取文本" : $"从文件 {Path.GetFileName(localFile)} 提取文本...";
+            msg = stream != null ? "从流提取文本" : $"从文件 {Path.GetFileName(localFile)} 提取文本...";
             await GetStatus(msg);
             Console.WriteLine();
             do
             {
-                results = await client.GetReadResultAsync(Guid.Parse(operationId));
+                results = await Client.GetReadResultAsync(Guid.Parse(operationId));
             }
             while ((results.Status == OperationStatusCodes.Running ||
                 results.Status == OperationStatusCodes.NotStarted));

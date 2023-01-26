@@ -7,13 +7,32 @@
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using BootstrapBlazor.OCR.Services;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration; 
+using BootstrapBlazor.OCR;
 
 namespace BootstrapBlazor.Ocr.Services
 {
 
     public class AiFormService : BaseService<AnalyzedDocument>
     {
+
+        /*
+         此代码示例显示使用 Azure 表单识别器客户端库进行的预构建收据操作。
+         要了解更多信息，请访问文档 - 快速入门：表单识别器 C# 客户端库 SDK
+         https://docs.microsoft.com/en-us/azure/applied-ai-services/form-recognizer/quickstarts/try-v3-csharp-sdk
+        */
+
+
+        /*
+          完成后请记住从您的代码中删除密钥，并且永远不要公开发布。对于生产，使用
+          存储和访问您的凭据的安全方法。有关详细信息，请参阅
+        https://docs.microsoft.com/en-us/azure/cognitive-services/cognitive-services-security?tabs=command-line%2Ccsharp#environment-variables-and-application-configuration
+        */
+        
+        public string Endpoint = "YOUR_FORM_RECOGNIZER_ENDPOINT";
+        
+        public string SubscriptionKey = "YOUR_FORM_RECOGNIZER_KEY";
+        
         public AiFormService(IConfiguration? config)
         {
             if (config != null)
@@ -28,54 +47,7 @@ namespace BootstrapBlazor.Ocr.Services
             SubscriptionKey = key;
             Endpoint = url;
         }
-
-        /*
-         This code sample shows Prebuilt Receipt operations with the Azure Form Recognizer client library. 
-
-         To learn more, please visit the documentation - Quickstart: Form Recognizer C# client library SDKs
-         https://docs.microsoft.com/en-us/azure/applied-ai-services/form-recognizer/quickstarts/try-v3-csharp-sdk
-        */
-
-
-        /*
-          Remember to remove the key from your code when you're done, and never post it publicly. For production, use
-          secure methods to store and access your credentials. For more information, see 
-          https://docs.microsoft.com/en-us/azure/cognitive-services/cognitive-services-security?tabs=command-line%2Ccsharp#environment-variables-and-application-configuration
-        */
-        public string Endpoint = "YOUR_FORM_RECOGNIZER_ENDPOINT";
-        public string SubscriptionKey = "YOUR_FORM_RECOGNIZER_KEY";
-
-        /// <summary>
-        /// 转换 BrowserFileStream 到 MemoryStream
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static async Task<Stream> CopyStream(Stream input)
-        {
-            try
-            {
-                if (input.GetType().Name == "BrowserFileStream")
-                {
-                    var output = new MemoryStream();
-                    byte[] buffer = new byte[16 * 1024];
-                    int read;
-                    while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                    {
-                        output.Write(buffer, 0, read);
-                    }
-                    return output;
-                }
-                else
-                {
-                    return input;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw;
-            }
-        }
+        
 
         public async Task<List<string>> AnalyzeDocument(string? url = null, Stream? image = null, string modelId = "prebuilt-receipt")
         {
@@ -90,7 +62,7 @@ namespace BootstrapBlazor.Ocr.Services
 
             if (image != null)
             {
-                var ms = await CopyStream(image);
+                var ms = await Utils.CopyStream(image);
                 operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, modelId, ms);
             }
             else

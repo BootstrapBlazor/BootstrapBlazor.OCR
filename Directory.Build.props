@@ -9,12 +9,4 @@
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
-
-    <PropertyGroup> 
-        <IsPackable>true</IsPackable>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageIcon>logo.png</PackageIcon>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <NoWarn>1701;1702;1705;1591</NoWarn> 
-    </PropertyGroup> 
 </Project>

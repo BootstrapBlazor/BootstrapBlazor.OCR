@@ -24,7 +24,7 @@ namespace BootstrapBlazor.OCR.Services
         /// </summary>
         public Func<string, Task>? OnError { get; set; }
 
-        public async Task GetStatus(string status)
+        public async Task<string> GetStatus(string status = "----------------------------------------------------------")
         {
             try
             {
@@ -35,6 +35,7 @@ namespace BootstrapBlazor.OCR.Services
             {
                 if (OnError != null) await OnError.Invoke(e.Message);
             }
+            return status;
         }
 
         public async Task GetResult(List<Model> models)
