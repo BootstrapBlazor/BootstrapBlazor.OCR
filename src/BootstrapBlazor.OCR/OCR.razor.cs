@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace BootstrapBlazor.Components;
 
@@ -20,7 +21,10 @@ public partial class OCR
     public string URL { get; set; } = "https://freepos.es/uploads/demo/Doc/libai.jpg";
     string? log;
     string? log2;
-    [Inject] OcrService? OcrService { get; set; }
+    
+    [Inject]
+    [NotNull]
+    public OcrService? OcrService { get; set; }
 
     /// <summary>
     /// 获得/设置 识别完成回调方法,返回 ReadResult
@@ -92,12 +96,30 @@ public partial class OCR
     [Parameter]
     public string? Endpoint { get; set; }
 
+    /// <summary>
+    /// 获得/设置 分析图像
+    /// </summary>
+    [Parameter]
+    public bool AnalyzeImage { get; set; }
+
+    /// <summary>
+    /// 获得/设置 检测图像中的对象
+    /// </summary>
+    [Parameter]
+    public bool DetectObjects { get; set; }
+
+    /// <summary>
+    /// 获得/设置 检测图像中的地标或名人
+    /// </summary>
+    [Parameter]
+    public bool DetectDomainSpecific { get; set; }
+
     protected string? uploadstatus;
 
     long maxFileSize = 1024 * 1024 * 15;
 
     public List<ReadResult>? Results { get; set; }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         try
@@ -105,7 +127,7 @@ public partial class OCR
             if (firstRender)
             {
                 if (Key != null) OcrService!.SubscriptionKey = Key;
-                if (Endpoint != null) OcrService!.Endpoint = Endpoint; 
+                if (Endpoint != null) OcrService!.Endpoint = Endpoint;
                 OcrService!.OnResult = OnResult1;
                 OcrService!.Result = OnResult;
                 OcrService.OnStatus = OnStatus;
@@ -117,7 +139,7 @@ public partial class OCR
             if (OnError != null) await OnError.Invoke(e.Message);
         }
     }
-    
+
     protected async Task OnChange(InputFileChangeEventArgs e)
     {
         int i = 0;
@@ -136,7 +158,15 @@ public partial class OCR
         try
         {
             using var stream = efile.OpenReadStream(maxFileSize);
-            var res = await OcrService!.StartOcr(image: stream);
+            await OcrService!.CopyStreamAsync(stream);
+            if (DetectDomainSpecific || DetectObjects || AnalyzeImage)
+            {
+                log = "图像获取成功";
+                StateHasChanged();
+                return;
+            }
+
+            var res = await OcrService!.StartOcr(stream: stream);
             //if (OnResult != null) await OnResult.Invoke(res);
             if (Debug)
             {
@@ -151,17 +181,17 @@ public partial class OCR
             if (OnError != null) await OnError.Invoke(e.Message);
         }
     }
-    
+
     private void oninput(ChangeEventArgs e)
     {
-        URL = e.Value?.ToString()??"";
+        URL = e.Value?.ToString() ?? "";
     }
 
     /// <summary>
     /// 识别文字
     /// </summary>
     public virtual async Task GetOCR() => await GetOCR(null);
-    
+
     /// <summary>
     /// 识别 url 文字
     /// </summary>
@@ -169,7 +199,7 @@ public partial class OCR
     {
         try
         {
-            var res = await OcrService!.StartOcr(url??this.URL);
+            var res = await OcrService!.StartOcr(url ?? this.URL);
             if (Debug)
             {
                 log = "";
@@ -191,7 +221,7 @@ public partial class OCR
     {
         try
         {
-            var res = await OcrService!.StartOcr(image: stream);
+            var res = await OcrService!.StartOcr(stream: stream);
             if (Debug)
             {
                 log = "";
@@ -204,7 +234,7 @@ public partial class OCR
             log += "Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
-    }     
+    }
 
     /// <summary>
     /// 获得/设置 错误回调方法
@@ -212,7 +242,7 @@ public partial class OCR
     [Parameter]
     public Func<string, Task>? OnError { get; set; }
 
-    
+
     private async Task OnResult1(List<ReadResult> models)
     {
         this.Results = models;
@@ -225,11 +255,100 @@ public partial class OCR
         StateHasChanged();
         return Task.CompletedTask;
     }
+
+    private Task OnStatus2(string message)
+    {
+        log += message + Environment.NewLine; 
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
     private Task OnError1(string message)
     {
         this.log2 = message;
         StateHasChanged();
         return Task.CompletedTask;
+    }
+
+
+    protected async Task OcrGO()
+    {
+        if (OcrService.Tempfilename == null) return;
+        try
+        {
+            var res = await OcrService!.OcrLocal(OcrService.Tempfilename);
+            if (Debug)
+            {
+                log = "";
+                res.ForEach(a => log += a + Environment.NewLine);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            log += "Error:" + e.Message + Environment.NewLine;
+            if (OnError != null) await OnError.Invoke(e.Message);
+        }
+    }
+
+    protected async Task AnalyzeImageGo()
+    {
+        if (OcrService.Tempfilename == null) return;
+        try
+        {
+            var res = await OcrService!.AnalyzeImage(localImage: OcrService.Tempfilename);
+            if (Debug)
+            {
+                log = "";
+                res.ForEach(a => log += a + Environment.NewLine);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            log += "Error:" + e.Message + Environment.NewLine;
+            if (OnError != null) await OnError.Invoke(e.Message);
+        }
+    }
+
+    protected async Task DetectObjectsGO()
+    {
+        if (OcrService.Tempfilename == null) return;
+        try
+        {
+            var res = await OcrService!.DetectObjects(localImage: OcrService.Tempfilename);
+            if (Debug)
+            {
+                log = "";
+                res.ForEach(a => log += a + Environment.NewLine);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            log += "Error:" + e.Message + Environment.NewLine;
+            if (OnError != null) await OnError.Invoke(e.Message);
+        }
+    }
+
+    protected async Task DetectDomainSpecificGo()
+    {
+        if (OcrService.Tempfilename == null) return;
+        try
+        {
+            var res = await OcrService!.DetectDomainSpecific(localImage: OcrService.Tempfilename);
+            if (Debug)
+            {
+                log = "";
+                res.ForEach(a => log += a + Environment.NewLine);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            log += "Error:" + e.Message + Environment.NewLine;
+            if (OnError != null) await OnError.Invoke(e.Message);
+        }
     }
 
 }

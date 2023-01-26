@@ -37,3 +37,19 @@
     <hr style="width: 90%; max-width: 550px; " />
     <button class="btn btn-outline-secondary" onclick="@(async() =>await GetOCR())">@OcrUrlButtonText</button>
 }
+@if (AnalyzeImage)
+{
+    <button class="btn btn-outline-secondary" onclick="@(async() =>await OcrGO())">文本识别</button>
+}
+@if (AnalyzeImage)
+{
+    <button class="btn btn-outline-secondary" onclick="@(async() =>await AnalyzeImageGo())">分析图像</button>
+}
+@if (DetectObjects)
+{
+    <button class="btn btn-outline-secondary" onclick="@(async() =>await DetectObjectsGO())">检测对象</button>
+}
+@if (DetectDomainSpecific)
+{
+    <button class="btn btn-outline-secondary" onclick="@(async() =>await GetOCR())">检测地标/名人</button>
+}
