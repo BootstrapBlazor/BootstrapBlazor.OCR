@@ -165,15 +165,7 @@ public partial class OCR
                 StateHasChanged();
                 return;
             }
-
-            var res = await OcrService!.StartOcr(stream: stream);
-            //if (OnResult != null) await OnResult.Invoke(res);
-            if (Debug)
-            {
-                log = "";
-                res.ForEach(a => log += a + Environment.NewLine);
-                StateHasChanged();
-            }
+            await OcrGO(); 
         }
         catch (Exception e)
         {
