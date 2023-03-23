@@ -12,7 +12,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace BootstrapBlazor.Ocr.Services;
 
-
+/// <summary>
+/// AI Form 表格识别
+/// </summary>
 public class AiFormService : BaseService<AnalyzedDocument>
 {
 

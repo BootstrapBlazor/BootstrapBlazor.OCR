@@ -11,7 +11,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace BootstrapBlazor.Ocr.Services;
 
-
+/// <summary>
+/// OCR
+/// </summary>
 public partial class OcrService : BaseService<ReadResult>
 {
     public string? LocalFilePath;

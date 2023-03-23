@@ -12,7 +12,9 @@ using Newtonsoft.Json.Linq;
 
 namespace BootstrapBlazor.Ocr.Services;
 
-
+/// <summary>
+/// OCR
+/// </summary>
 public partial class OcrService : BaseService<ReadResult>
 {
     #region 分析图像
