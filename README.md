@@ -26,7 +26,7 @@ https://blazor.app1.es/translate
     builder.Services.AddTransient<TranslateService>();
     ```
 
-4. Razor页面
+4. Key
 
     `appsettings.json`或者其他配置文件添加配置
 
