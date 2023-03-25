@@ -1,10 +1,12 @@
-## Blazor 光学字符识别 (OCR) 组件
+## Blazor 光学字符识别(OCR)/ 翻译/AI表格识别 组件 
 
 ### 示例
 
-https://www.blazor.zone/ocr
-
 https://blazor.app1.es/ocr
+
+https://blazor.app1.es/aiform
+
+https://blazor.app1.es/translate
 
 ## 使用方法:
 
@@ -19,18 +21,42 @@ https://blazor.app1.es/ocr
 3. Program.cs 文件添加
 
     ```
-    builder.Services.AddOcrExtensions("YourAzureCvKey", "YourAzureCvEndpoint");
+    builder.Services.AddTransient<OcrService>();
+    builder.Services.AddTransient<AiFormService>();
+    builder.Services.AddTransient<TranslateService>();
     ```
 
 4. Razor页面
 
-    Razor  
-    <https://github.com/densen2014/Densen.Extensions/blob/master/Demo/DemoShared/Pages/OcrPage.razor>
+    `appsettings.json`或者其他配置文件添加配置
 
     ```
+      "AzureCvKey": "AzureCvKey",
+      "AzureCvUrl": "https://xxx.cognitiveservices.azure.com/",
+      "AzureAiFormKey": "AzureAiFormKey",
+      "AzureAiFormUrl": "https://xxx.cognitiveservices.azure.com/",
+      "AzureTranslateKey": "AzureTranslateKey",
+      "AzureTranslateUrl": "https://api.cognitive.microsofttranslator.com",
+
+    ```
+
+5. Razor页面
+
+
+    [OcrPage.razor](https://github.com/densen2014/Densen.Extensions/blob/master/Demo/DemoShared/Pages/OcrPage.razor)
+
+    [AiFormPage.razor](https://github.com/densen2014/Densen.Extensions/blob/master/Demo/DemoShared/Pages/AiFormPage.razor)
+
+    [TranslatePage.razor](https://github.com/densen2014/Densen.Extensions/blob/master/Demo/DemoShared/Pages/TranslatePage.razor)
+
+     Razor  
+
+   ```
     @using BootstrapBlazor.Components
     
     <OCR ShowUI="true" ShowUI_Capture="true" Debug="true" OnResult="OnResult" />
+    <AiForm ShowUI="true" Debug="true" OnReadResult="OnResult2" /> 
+    <Translate /> 
 
     @code{
         List<string> res { get; set; }
@@ -40,6 +66,15 @@ https://blazor.app1.es/ocr
             StateHasChanged();
             return Task.CompletedTask;
         }
+
+        List<AnalyzedDocument>? models { get; set; }
+        private Task OnResult2(List<AnalyzedDocument> models)
+        {
+            this.models = models;
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
+
     }
  
     ```
@@ -52,67 +87,15 @@ https://blazor.app1.es/ocr
 
     <https://www.blazor.zone>
 
-    <https://www.blazor.zone/ocr>
 
 ----
+#### 更新历史
 
-## Blazor OCR component
+v7.1.0 
+- 添加翻译组件
 
-### Demo
-
-https://www.blazor.zone/ocr
-
-https://blazor.app1.es/ocr
-
-## Instructions:
-
-1. NuGet install pack 
-
-    `BootstrapBlazor.OCR`
-
-2. _Imports.razor or Razor page
-
-   ```
-   @using BootstrapBlazor.Components
-   ```
-   
-3. Program.cs
-
-    ```
-    builder.Services.AddOcrExtensions("YourAzureCvKey", "YourAzureCvEndpoint");
-    ```
- 
-4. Razor page
-
-    Razor  
-    <https://github.com/densen2014/Densen.Extensions/blob/master/Demo/DemoShared/Pages/OcrPage.razor>
-
-    ```
-    @using BootstrapBlazor.Components
-    
-    <OCR ShowUI="true" ShowUI_Capture="true" Debug="true" OnResult="OnResult" />
-
-    @code{
-        List<string> res { get; set; }
-        private Task OnResult(List<string> res)
-        {
-            this.res = res;
-            StateHasChanged();
-            return Task.CompletedTask;
-        }
-    }
-    
-    ```
-    
-
-2.  More informations
-
-    Bootstrap style Blazor UI component library
-Based on the Bootstrap style library, it is carefully built, and 100 a variety of commonly used components have been added to bring you an extraordinary feeling for rapid development projects
-
-    <https://www.blazor.zone>
-
-    <https://www.blazor.zone/ocr>
+v6.1.2 
+- 添加AI表格识别组件 
 
 
 ---
