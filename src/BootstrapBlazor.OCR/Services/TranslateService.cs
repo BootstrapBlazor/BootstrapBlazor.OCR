@@ -8,6 +8,8 @@ using BootstrapBlazor.OCR.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Text;
 using static BootstrapBlazor.AzureServices.TranslateResponse;
 
@@ -83,28 +85,43 @@ public partial class TranslateService : BaseService<ReadResult>
         }
     }
 }
-    public enum TranslateLanguage
-    {
-        cn, es, en, fr, ca, zh_Hant
-    }
 
-    //[{"detectedLanguage":{"language":"en","score":1.0},"translations":[{"text":"PRODUCTNAME_6","to":"es"},{ "text":"PRODUCTNAME_6","to":"en"}]}]
-    public class TranslateResponse
+public enum EnumTranslateLanguage
+{
+    [Display(Name = "中文")]
+    zh_cn,
+    [Display(Name = "西班牙文")]
+    es,
+    [Display(Name = "英文")]
+    en,
+    [Display(Name = "法文")]
+    fr,
+    [Display(Name = "加泰罗尼亚文")]
+    ca,
+    [Display(Name = "繁体中文")]
+    zh_Hant
+}
+
+
+//[{"detectedLanguage":{"language":"en","score":1.0},"translations":[{"text":"PRODUCTNAME_6","to":"es"},{ "text":"PRODUCTNAME_6","to":"en"}]}]
+public class TranslateResponse
 {
 
-        public Detectedlanguage? detectedLanguage { get; set; }
-        public Translation[]? translations { get; set; }
-        public class Detectedlanguage
-        {
-            public string? language { get; set; }
-            public float score { get; set; }
-        }
-        public class Translation
-        {
-            public string? text { get; set; }
-            public string? to { get; set; }
-        }
+    public Detectedlanguage? detectedLanguage { get; set; }
+    public Translation[]? translations { get; set; }
+    public class Detectedlanguage
+    {
+        public string? language { get; set; }
+        public float score { get; set; }
     }
- 
+    public class Translation
+    {
+        public string? text { get; set; }
+        public string? to { get; set; }
+
+        public string? DisplayName { get => to!=null? new CultureInfo(to).DisplayName:"unknow"; }
+    }
+}
+
 
 
