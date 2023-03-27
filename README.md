@@ -1,4 +1,4 @@
-## Blazor 光学字符识别(OCR)/翻译/AI表格识别/Azure OpenAI 组件 
+## Blazor 光学字符识别(OCR)/翻译/AI表格识别/Azure OpenAI/播放语音/文本转语音 组件 
 
 ### 示例
 
@@ -24,6 +24,7 @@ https://blazor.app1.es/translate
     builder.Services.AddTransient<OcrService>();
     builder.Services.AddTransient<AiFormService>();
     builder.Services.AddTransient<TranslateService>();
+    builder.Services.AddTransient<StsService>();
     ```
 
 4. Key
@@ -37,6 +38,9 @@ https://blazor.app1.es/translate
       "AzureAiFormUrl": "https://xxx.cognitiveservices.azure.com/",
       "AzureTranslateKey": "AzureTranslateKey",
       "AzureTranslateUrl": "https://api.cognitive.microsofttranslator.com",
+      "AzureSsKey": "AzureSsKey",
+      "AzureSsUrl": "https://xxx.tts.speech.microsoft.com/cognitiveservices/v1",
+      "AzureSsFetchTokenUri": "https://xxx.api.cognitive.microsoft.com/sts/v1.0/issueToken",
 
     ```
 
@@ -49,6 +53,8 @@ https://blazor.app1.es/translate
 
     [TranslatePage.razor](https://github.com/densen2014/Densen.Extensions/blob/master/Demo/DemoShared/Pages/TranslatePage.razor)
 
+    [PlayAudioPage.razor](https://github.com/densen2014/Densen.Extensions/blob/master/Demo/DemoShared/Pages/PlayAudioPage.razor)
+
      Razor  
 
    ```
@@ -57,6 +63,7 @@ https://blazor.app1.es/translate
     <OCR ShowUI="true" ShowUI_Capture="true" Debug="true" OnResult="OnResult" />
     <AiForm ShowUI="true" Debug="true" OnReadResult="OnResult2" /> 
     <Translate /> 
+    <PlayAudio TextOrSSML="你好,Blazor!" />
 
     @code{
         List<string> res { get; set; }
