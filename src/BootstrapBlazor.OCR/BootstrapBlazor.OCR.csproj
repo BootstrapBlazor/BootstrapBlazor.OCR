@@ -15,12 +15,12 @@
     </PropertyGroup>
     
     <PropertyGroup>
-        <Version>7.1.1</Version>
+        <Version>7.1.2</Version>
         <PackageProjectUrl>https://github.com/densen2014/BootstrapBlazor.OCR</PackageProjectUrl>
         <RepositoryUrl>https://github.com/densen2014/BootstrapBlazor.OCR</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>Bootstrap Blazor OCR 光学字符识别 组件</PackageTags>
-        <Description>Bootstrap UI OCR components experience</Description>
+        <PackageTags>Bootstrap Blazor 光学字符识别(OCR)/翻译/AI表格识别/Azure OpenAI 组件</PackageTags>
+        <Description>Bootstrap Blazor OCR/AiForm/Translate components</Description>
         <AssemblyName>BootstrapBlazor.OCR</AssemblyName>
         <RootNamespace>BootstrapBlazor.OCR</RootNamespace>
         <AssemblyOriginatorKeyFile>..\keys\Longbow.Utility.snk</AssemblyOriginatorKeyFile>
@@ -37,6 +37,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0" />
+            <PackageReference Include="AzureOpenAIClient" Version="1.0.2" /> 
     </ItemGroup>
 
     <!-- 通过移除正常的引用并替换成固定版本的引用，达到无论如何更新都无法生效的目的。 -->
@@ -48,7 +49,7 @@
     </Target>
     
     <ItemGroup>
-        <PackageReference Include="Azure.AI.FormRecognizer" Version="4.0.0" /> 
+        <PackageReference Include="Azure.AI.FormRecognizer" Version="4.0.0" />
         <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
         <PackageReference Include="BootstrapBlazor" Version="7.*" />
     </ItemGroup> 

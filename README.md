@@ -1,4 +1,4 @@
-## Blazor 光学字符识别(OCR)/ 翻译/AI表格识别 组件 
+## Blazor 光学字符识别(OCR)/翻译/AI表格识别/Azure OpenAI 组件 
 
 ### 示例
 
