@@ -68,7 +68,7 @@ public partial class PlayAudio : IAsyncDisposable
         if (firstRender)
         {
             Module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BootstrapBlazor.OCR/audio.js" + "?v=" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
-
+            await Task.Delay(100);
             await Play();
         }
     }
