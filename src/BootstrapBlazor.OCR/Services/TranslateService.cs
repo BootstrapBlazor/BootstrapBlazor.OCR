@@ -48,7 +48,7 @@ public partial class TranslateService : BaseService<ReadResult>
     /// <param name="textToTranslate"></param>
     /// <param name="route"></param>
     /// <returns></returns>
-    public async Task<List<Translation>?> Translate(string textToTranslate = "I would really like to drive your car around the block a few times!", string route = "/translate?api-version=3.0&to=es&to=en&to=fr&to=ca&to=zh-Hant")
+    public async Task<List<Translation>?> Translate(string textToTranslate = "I would really like to drive your car around the block a few times!", string route = "/translate?api-version=3.0&to=es&to=en&to=fr&to=ca&to=zh-Hant&to=pt&to=it&to=de&to=pl")
     {
         try
         {
@@ -99,7 +99,15 @@ public enum EnumTranslateLanguage
     [Display(Name = "加泰罗尼亚文")]
     ca,
     [Display(Name = "繁体中文")]
-    zh_Hant
+    zh_Hant,
+    [Display(Name = "葡萄牙语")]
+    pt,
+    [Display(Name = "意大利语")]
+    it,
+    [Display(Name = "德语")]
+    de,
+    [Display(Name = "波兰语")]
+    pl,
 }
 
 

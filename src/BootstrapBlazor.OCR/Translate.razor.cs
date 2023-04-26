@@ -18,6 +18,8 @@ namespace BootstrapBlazor.Components;
 /// </summary>
 public partial class Translate 
 {
+    [NotNull]
+    PlayAudio? PlayAudio { get; set; }
 
     [NotNull]
     [Inject]
@@ -83,9 +85,17 @@ public partial class Translate
         InputText = string.Empty;
         Items.Add(val);
         return Task.CompletedTask;
-    } 
+    }
 
+    private async Task OnPlay(string? text,string? voice)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return;
+        }
 
+        await PlayAudio.Play(text, voice);
+    }
 }
 
 

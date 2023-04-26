@@ -9,6 +9,7 @@ using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
 using System.Text;
+using static BootstrapBlazor.AzureServices.Enums;
 
 namespace BootstrapBlazor.AzureServices;
 
@@ -72,7 +73,7 @@ public partial class StsService : BaseService<ReadResult>
         var ssml = speakText;
         if (!ssml.StartsWith("<speak "))
         {
-            voicename = string.IsNullOrWhiteSpace(voicename) ? "zh-HK-HiuGaaiNeural" : voicename;
+            voicename = string.IsNullOrWhiteSpace(voicename) ? "zh-HK-HiuGaaiNeural" : GetVoiceName(voicename);
             style = string.IsNullOrWhiteSpace(style) ? "calm" : style;
             ssml = CreateSSML(speakText, voicename, style);
         }
@@ -128,6 +129,32 @@ public partial class StsService : BaseService<ReadResult>
         ssml = ssml + @$"</speak>";
         return ssml;
     }
+
+    private string GetVoiceName(string name) => name switch
+    {
+        "zh-Hans" => AzureVoiceName.zh_CN_XiaomoNeural.GetEnumName(),
+
+        "es" => AzureVoiceName.es_ES_AbrilNeural.GetEnumName(),
+
+        "en" => AzureVoiceName.en_US_JennyNeural.GetEnumName(),
+
+        "fr" => AzureVoiceName.fr_FR_BrigitteNeural.GetEnumName(), 
+
+        "ca" => AzureVoiceName.ca_ES_AlbaNeural.GetEnumName(), 
+
+        "zh-Hant" => AzureVoiceName.zh_HK_HiuGaaiNeural.GetEnumName(),
+
+        "pt" => AzureVoiceName.pt_PT_FernandaNeural.GetEnumName(),
+
+        "it" => AzureVoiceName.it_IT_FabiolaNeural.GetEnumName(),
+
+        "de" => AzureVoiceName.de_DE_AmalaNeural.GetEnumName(),
+
+        "pl" => AzureVoiceName.pl_PL_AgnieszkaNeural.GetEnumName(), 
+        _ => name
+    };
+
+
 }
 
 

@@ -49,6 +49,24 @@ public partial class Enums
 
         [Description("zh-HK-WanLungNeural")]
         zh_HK_WanLungNeural,
+
+        [Description("fr-FR-BrigitteNeural")]
+        fr_FR_BrigitteNeural,
+
+        [Description("ca-ES-AlbaNeural")]
+        ca_ES_AlbaNeural,
+
+        [Description("pt-PT-FernandaNeural")]
+        pt_PT_FernandaNeural,
+
+        [Description("it-IT-FabiolaNeural")]
+        it_IT_FabiolaNeural,
+
+        [Description("de-DE-AmalaNeural")]
+        de_DE_AmalaNeural,
+
+        [Description("pl-PL-AgnieszkaNeural")]
+        pl_PL_AgnieszkaNeural,
     }
 
     /// <summary>
