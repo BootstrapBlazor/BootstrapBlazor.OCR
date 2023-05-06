@@ -51,7 +51,7 @@
     <ItemGroup>
         <PackageReference Include="Azure.AI.FormRecognizer" Version="4.0.0" />
         <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
-        <PackageReference Include="BootstrapBlazor" Version="7.5.7" />
+        <PackageReference Include="BootstrapBlazor" Version="7.*" />
     </ItemGroup> 
 
     <ItemGroup>
