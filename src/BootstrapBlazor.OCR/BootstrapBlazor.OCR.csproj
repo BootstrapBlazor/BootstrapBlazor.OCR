@@ -25,6 +25,7 @@
         <RootNamespace>BootstrapBlazor.OCR</RootNamespace>
         <AssemblyOriginatorKeyFile>..\keys\Longbow.Utility.snk</AssemblyOriginatorKeyFile>
         <SignAssembly>True</SignAssembly>
+        <OutputPath>..\..\..\Bin</OutputPath>
     </PropertyGroup>
     
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
