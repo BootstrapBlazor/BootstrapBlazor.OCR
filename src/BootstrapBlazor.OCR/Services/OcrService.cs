@@ -228,7 +228,7 @@ public partial class OcrService : BaseService<ReadResult>
     /// <param name="localFile"></param>
     /// <param name="stream"></param>
     /// <returns></returns>
-    public async Task<List<string>> OcrLocal(string localFile, Stream? stream = null)
+    public async Task<List<string>> OcrLocal(string localFile, Stream? stream = null,bool splitPerLine=false)
     {
         Console.WriteLine("----------------------------------------------------------");
         msg = stream != null ? "从流提取文本" : "从本地文件提取文本";
@@ -264,15 +264,31 @@ public partial class OcrService : BaseService<ReadResult>
         // 显示找到的文本。
         Console.WriteLine();
         var res = new List<string>();
+        var res2 = new List<string>();
+        double? lastheight = 0.0;
         var textUrlFileResults = results.AnalyzeResult.ReadResults;
         await GetStatus("end");
         await GetResult(textUrlFileResults.ToList());
         foreach (ReadResult page in textUrlFileResults)
         {
+            Console.WriteLine($"Angle角度: {page.Angle}");
+            var line2 = "";
             foreach (Line line in page.Lines)
             {
                 res.Add($"{line.Text}");
-                Console.WriteLine(line.Text);
+                if (line.BoundingBox[1] >= lastheight+20 || line.BoundingBox[1] <= lastheight-20)
+                {
+                    //X 左上、Y 左上、  X 右上、Y 右上、   X 右下、Y 右下、   X 左下、Y 左下
+                    line2+=line.Text+"\t"; 
+                }
+                else
+                {
+                    Console.WriteLine($"line2=> {line2}");
+                    res2.Add(line2);
+                    line2 = "";
+                }
+                lastheight = line.BoundingBox[1];
+                Console.WriteLine($"{line.Text}  Y 左上{line.BoundingBox[1]}");
             }
         }
         Console.WriteLine();

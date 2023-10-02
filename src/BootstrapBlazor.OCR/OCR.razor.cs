@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 
 namespace BootstrapBlazor.Components;
 
@@ -39,6 +40,12 @@ public partial class OCR
     public Func<List<string>, Task>? OnResult { get; set; }
 
     /// <summary>
+    /// 获得/设置 状态回调方法,返回 string
+    /// </summary>
+    [Parameter]
+    public Func<string, Task>? OnStatus { get; set; }
+
+    /// <summary>
     /// 获得/设置 Url识别按钮文字 默认为 执行识别
     /// </summary>
     [Parameter]
@@ -61,25 +68,25 @@ public partial class OCR
 
 
     /// <summary>
-    /// 获得/设置 显示内置UI
+    /// 获得/设置 显示内置UI, 默认为 false
     /// </summary>
     [Parameter]
     public bool ShowUI { get; set; }
 
     /// <summary>
-    /// 获得/设置 显示内置UI
+    /// 获得/设置 显示内置UI, 默认为 true
     /// </summary>
     [Parameter]
     public bool ShowUI_Capture { get; set; } = true;
 
     /// <summary>
-    /// 获得/设置 显示内置识别URL的UI
+    /// 获得/设置 显示内置识别URL的UI, 默认为 false
     /// </summary>
     [Parameter]
     public bool ShowUI_Url { get; set; }
 
     /// <summary>
-    /// 获得/设置 显示log
+    /// 获得/设置 显示log, 默认为 false
     /// </summary>
     [Parameter]
     public bool Debug { get; set; }
@@ -97,19 +104,19 @@ public partial class OCR
     public string? Endpoint { get; set; }
 
     /// <summary>
-    /// 获得/设置 分析图像
+    /// 获得/设置 分析图像, 默认为 false
     /// </summary>
     [Parameter]
     public bool AnalyzeImage { get; set; }
 
     /// <summary>
-    /// 获得/设置 检测图像中的对象
+    /// 获得/设置 检测图像中的对象, 默认为 false
     /// </summary>
     [Parameter]
     public bool DetectObjects { get; set; }
 
     /// <summary>
-    /// 获得/设置 检测图像中的地标或名人
+    /// 获得/设置 检测图像中的地标或名人, 默认为 false
     /// </summary>
     [Parameter]
     public bool DetectDomainSpecific { get; set; }
@@ -130,7 +137,7 @@ public partial class OCR
                 if (Endpoint != null) OcrService!.Endpoint = Endpoint;
                 OcrService!.OnResult = OnResult1;
                 OcrService!.Result = OnResult;
-                OcrService.OnStatus = OnStatus;
+                OcrService.OnStatus = OnStatus1;
                 OcrService.OnError = OnError1;
             }
         }
@@ -241,11 +248,11 @@ public partial class OCR
         if (OnReadResult != null) await OnReadResult.Invoke(models);
         StateHasChanged();
     }
-    private Task OnStatus(string message)
+    private async Task OnStatus1(string message)
     {
         this.log2 = message;
-        StateHasChanged();
-        return Task.CompletedTask;
+        if (OnStatus != null) await OnStatus.Invoke(message);
+        StateHasChanged(); 
     }
 
     private Task OnStatus2(string message)
