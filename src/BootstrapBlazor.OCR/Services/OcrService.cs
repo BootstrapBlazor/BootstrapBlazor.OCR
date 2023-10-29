@@ -54,7 +54,7 @@ public partial class OcrService : BaseService<ReadResult>
         Endpoint = url;
     }
 
-    ComputerVisionClient? client_;
+    private ComputerVisionClient? client_;
 
     public ComputerVisionClient Client
     {
@@ -67,7 +67,7 @@ public partial class OcrService : BaseService<ReadResult>
     /// </summary>
     /// <param name="models"></param>
     /// <returns></returns>
-    async Task GetResult(List<string> models)
+    private async Task GetResult(List<string> models)
     {
         try
         {
@@ -197,8 +197,8 @@ public partial class OcrService : BaseService<ReadResult>
             msg = $"{results.Status}...";
             await GetStatus(msg);
         }
-        while ((results.Status == OperationStatusCodes.Running ||
-            results.Status == OperationStatusCodes.NotStarted));
+        while ((results.Status is OperationStatusCodes.Running or
+            OperationStatusCodes.NotStarted));
 
         // 显示找到的文本。
         Console.WriteLine();
@@ -228,7 +228,7 @@ public partial class OcrService : BaseService<ReadResult>
     /// <param name="localFile"></param>
     /// <param name="stream"></param>
     /// <returns></returns>
-    public async Task<List<string>> OcrLocal(string localFile, Stream? stream = null,bool splitPerLine=false)
+    public async Task<List<string>> OcrLocal(string localFile, Stream? stream = null, bool splitPerLine = false)
     {
         Console.WriteLine("----------------------------------------------------------");
         msg = stream != null ? "从流提取文本" : "从本地文件提取文本";
@@ -256,8 +256,8 @@ public partial class OcrService : BaseService<ReadResult>
         {
             results = await Client.GetReadResultAsync(Guid.Parse(operationId));
         }
-        while ((results.Status == OperationStatusCodes.Running ||
-            results.Status == OperationStatusCodes.NotStarted));
+        while ((results.Status is OperationStatusCodes.Running or
+            OperationStatusCodes.NotStarted));
         // </snippet_extract_response>
 
         // <snippet_extract_display>
@@ -276,10 +276,10 @@ public partial class OcrService : BaseService<ReadResult>
             foreach (Line line in page.Lines)
             {
                 res.Add($"{line.Text}");
-                if (line.BoundingBox[1] >= lastheight+20 || line.BoundingBox[1] <= lastheight-20)
+                if (line.BoundingBox[1] >= lastheight + 20 || line.BoundingBox[1] <= lastheight - 20)
                 {
                     //X 左上、Y 左上、  X 右上、Y 右上、   X 右下、Y 右下、   X 左下、Y 左下
-                    line2+=line.Text+"\t"; 
+                    line2 += line.Text + "\t";
                 }
                 else
                 {

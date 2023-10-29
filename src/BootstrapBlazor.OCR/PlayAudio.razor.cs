@@ -59,7 +59,7 @@ public partial class PlayAudio : IAsyncDisposable
     [Inject]
     private IConfiguration? Config { get; set; }
 
-    string? ErrorMessage { get; set; }
+    private string? ErrorMessage { get; set; }
 
     public bool Processing = false;
 

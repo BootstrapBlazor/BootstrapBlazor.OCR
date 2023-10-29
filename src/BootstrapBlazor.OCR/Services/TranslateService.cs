@@ -127,7 +127,7 @@ public class TranslateResponse
         public string? text { get; set; }
         public string? to { get; set; }
 
-        public string? DisplayName { get => to!=null? new CultureInfo(to).DisplayName:"unknow"; }
+        public string? DisplayName { get => to != null ? new CultureInfo(to).DisplayName : "unknow"; }
     }
 }
 

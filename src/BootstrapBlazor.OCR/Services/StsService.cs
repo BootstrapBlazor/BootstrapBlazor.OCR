@@ -45,7 +45,7 @@ public partial class StsService : BaseService<ReadResult>
     {
         SubscriptionKey = key;
         Endpoint = url;
-    } 
+    }
 
     private async Task<string> FetchTokenAsync(string fetchUri, string subscriptionKey)
     {
@@ -68,7 +68,7 @@ public partial class StsService : BaseService<ReadResult>
     /// <param name="voicename"></param>
     /// <param name="style"></param>
     /// <returns></returns>
-    public async Task<byte[]?> GetVoiceAsync(string speakText, string? voicename= "zh-HK-HiuGaaiNeural", string? style= "calm")
+    public async Task<byte[]?> GetVoiceAsync(string speakText, string? voicename = "zh-HK-HiuGaaiNeural", string? style = "calm")
     {
         var ssml = speakText;
         if (!ssml.StartsWith("<speak "))
@@ -84,18 +84,18 @@ public partial class StsService : BaseService<ReadResult>
     {
         if (token == null || lastRefreshTime == null)
         {
-            this.token = await FetchTokenAsync(FetchTokenUri, SubscriptionKey);
-            this.lastRefreshTime = DateTime.Now;
+            token = await FetchTokenAsync(FetchTokenUri, SubscriptionKey);
+            lastRefreshTime = DateTime.Now;
         }
         if (DateTime.Now - lastRefreshTime > TimeSpan.FromMinutes(9))
         {
-            this.token = await FetchTokenAsync(FetchTokenUri, SubscriptionKey);
-            this.lastRefreshTime = DateTime.Now;
+            token = await FetchTokenAsync(FetchTokenUri, SubscriptionKey);
+            lastRefreshTime = DateTime.Now;
         }
         using (var client = new HttpClient())
         {
             var data = new StringContent(ssml, Encoding.UTF8, "application/ssml+xml");
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.token);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             client.DefaultRequestHeaders.Add("X-Microsoft-OutputFormat", "riff-24khz-16bit-mono-pcm");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/ssml+xml"));
             client.DefaultRequestHeaders.Add("User-Agent", "Densen TTS");
@@ -110,7 +110,7 @@ public partial class StsService : BaseService<ReadResult>
             else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 Console.WriteLine("Error: {0}", response.StatusCode);
-                this.token = FetchTokenAsync(FetchTokenUri, SubscriptionKey).Result;
+                token = FetchTokenAsync(FetchTokenUri, SubscriptionKey).Result;
                 return await GetVoiceAsync(ssml);
             }
             return null;
@@ -138,9 +138,9 @@ public partial class StsService : BaseService<ReadResult>
 
         "en" => AzureVoiceName.en_US_JennyNeural.GetEnumName(),
 
-        "fr" => AzureVoiceName.fr_FR_BrigitteNeural.GetEnumName(), 
+        "fr" => AzureVoiceName.fr_FR_BrigitteNeural.GetEnumName(),
 
-        "ca" => AzureVoiceName.ca_ES_AlbaNeural.GetEnumName(), 
+        "ca" => AzureVoiceName.ca_ES_AlbaNeural.GetEnumName(),
 
         "zh-Hant" => AzureVoiceName.zh_HK_HiuGaaiNeural.GetEnumName(),
 
@@ -150,7 +150,7 @@ public partial class StsService : BaseService<ReadResult>
 
         "de" => AzureVoiceName.de_DE_AmalaNeural.GetEnumName(),
 
-        "pl" => AzureVoiceName.pl_PL_AgnieszkaNeural.GetEnumName(), 
+        "pl" => AzureVoiceName.pl_PL_AgnieszkaNeural.GetEnumName(),
         _ => name
     };
 

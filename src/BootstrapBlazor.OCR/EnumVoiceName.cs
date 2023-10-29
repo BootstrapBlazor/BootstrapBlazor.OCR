@@ -88,7 +88,7 @@ public partial class Enums
 /// <summary>
 /// Enum 扩展方法
 /// </summary>
-static class EnumExtensions
+internal static class EnumExtensions
 {
 
     /// <summary>

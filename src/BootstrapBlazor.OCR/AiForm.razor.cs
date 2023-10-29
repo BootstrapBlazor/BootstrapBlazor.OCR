@@ -18,9 +18,10 @@ namespace BootstrapBlazor.Components;
 public partial class AiForm
 {
     public string url { get; set; } = "https://freepos.es/uploads/demo/Doc/ticket.jpg";
-    string? log;
-    string? log2;
-    [Inject] AiFormService? AiFormService { get; set; }
+
+    private string? log;
+    private string? log2;
+    [Inject] private AiFormService? AiFormService { get; set; }
 
     /// <summary>
     /// 获得/设置 识别完成回调方法,返回 ReadResult
@@ -78,7 +79,7 @@ public partial class AiForm
     public string? Endpoint { get; set; }
 
     protected string? uploadstatus;
-    long maxFileSize = 1024 * 1024 * 15;
+    private long maxFileSize = 1024 * 1024 * 15;
     public List<AnalyzedDocument>? Results { get; set; }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -123,16 +124,16 @@ public partial class AiForm
         }
         catch (Exception e)
         {
-            log +="Error:" + e.Message + Environment.NewLine;
+            log += "Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
         StateHasChanged();
-    } 
+    }
     private void oninput(ChangeEventArgs e)
     {
-        url = e.Value?.ToString()??"";
+        url = e.Value?.ToString() ?? "";
     }
-    
+
     /// <summary>
     /// 识别文字
     /// </summary>
@@ -140,7 +141,7 @@ public partial class AiForm
     {
         try
         {
-            var res = await AiFormService!.AnalyzeDocument(url,modelId: ModelId);
+            var res = await AiFormService!.AnalyzeDocument(url, modelId: ModelId);
             if (OnResult != null) await OnResult.Invoke(res);
             log = "";
             res.ForEach(a => log += a + Environment.NewLine);
@@ -151,29 +152,29 @@ public partial class AiForm
             log += "Error:" + e.Message + Environment.NewLine;
             if (OnError != null) await OnError.Invoke(e.Message);
         }
-    }     
+    }
 
     /// <summary>
     /// 获得/设置 错误回调方法
     /// </summary>
     [Parameter]
     public Func<string, Task>? OnError { get; set; }
-  
+
     private async Task OnResult1(List<AnalyzedDocument> models)
     {
-        this.Results = models;
+        Results = models;
         if (OnReadResult != null) await OnReadResult.Invoke(models);
         StateHasChanged();
     }
     private Task OnStatus(string message)
     {
-        this.log2 = message;
+        log2 = message;
         StateHasChanged();
         return Task.CompletedTask;
     }
     private Task OnError1(string message)
     {
-        this.log2 = message;
+        log2 = message;
         StateHasChanged();
         return Task.CompletedTask;
     }

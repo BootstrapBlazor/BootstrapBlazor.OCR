@@ -6,8 +6,6 @@
 
 using BootstrapBlazor.AzureServices;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Configuration;
-using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
@@ -16,14 +14,14 @@ namespace BootstrapBlazor.Components;
 /// <summary>
 /// Blazor Translate 翻译组件 
 /// </summary>
-public partial class Translate 
+public partial class Translate
 {
     [NotNull]
-    PlayAudio? PlayAudio { get; set; }
+    private PlayAudio? PlayAudio { get; set; }
 
     [NotNull]
     [Inject]
-     private TranslateService? TranslateService { get; set; }
+    private TranslateService? TranslateService { get; set; }
 
     /// <summary>
     /// 获得/设置 查询关键字
@@ -31,14 +29,14 @@ public partial class Translate
     [Parameter]
     public string? Search { get; set; }
 
-    string? ErrorMessage { get; set; }
+    private string? ErrorMessage { get; set; }
 
     [DisplayName("翻译")]
     private string? InputText { get; set; }
 
-    private string? PlaceHolderText { get; set; }="输入原文";
+    private string? PlaceHolderText { get; set; } = "输入原文";
 
-    private static List<string> Items { get; set; } =new List<string>();
+    private static List<string> Items { get; set; } = new List<string>();
 
     private IEnumerable<EnumTranslateLanguage> SelectedEnumValues { get; set; } = new List<EnumTranslateLanguage>
     {
@@ -48,20 +46,20 @@ public partial class Translate
         EnumTranslateLanguage.zh_Hant
     };
 
-    List<TranslateResponse.Translation>? Result { get; set; }
+    private List<TranslateResponse.Translation>? Result { get; set; }
 
     private string Route()
     {
-        if (!SelectedEnumValues.Any()) return  "/translate?api-version=3.0&to=es&to=en&to=fr&to=ca&to=zh-Hant";
-        var route= "/translate?api-version=3.0";
+        if (!SelectedEnumValues.Any()) return "/translate?api-version=3.0&to=es&to=en&to=fr&to=ca&to=zh-Hant";
+        var route = "/translate?api-version=3.0";
         foreach (var item in SelectedEnumValues)
         {
-            route += "&to=" + item.ToString().Replace ("_","-");
+            route += "&to=" + item.ToString().Replace("_", "-");
         }
         return route;
-    } 
+    }
 
-    private async Task OnValueChanged(string val)=> await OnTranslate (val); 
+    private async Task OnValueChanged(string val) => await OnTranslate(val);
 
     private async Task OnTranslate(string val)
     {
@@ -87,7 +85,7 @@ public partial class Translate
         return Task.CompletedTask;
     }
 
-    private async Task OnPlay(string? text,string? voice)
+    private async Task OnPlay(string? text, string? voice)
     {
         if (string.IsNullOrWhiteSpace(text))
         {

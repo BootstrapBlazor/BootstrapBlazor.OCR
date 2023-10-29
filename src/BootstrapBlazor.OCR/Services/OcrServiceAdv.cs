@@ -225,10 +225,12 @@ public partial class OcrService : BaseService<ReadResult>
     /// <returns></returns>
     public async Task<List<string>> DetectObjects(string? urlImage = null, Stream? stream = null, string? localImage = null)
     {
-        var res = new List<string>();
-        res.Add(await GetStatus("----------------------------------------------------------"));
-        res.Add(await GetStatus($"检测对象 -  {Desc(urlImage, stream, localImage)}"));
-        res.Add(await GetStatus());
+        var res = new List<string>
+        {
+            await GetStatus("----------------------------------------------------------"),
+            await GetStatus($"检测对象 -  {Desc(urlImage, stream, localImage)}"),
+            await GetStatus()
+        };
 
         if (stream == null && !string.IsNullOrEmpty(localImage))
         {
@@ -266,10 +268,12 @@ public partial class OcrService : BaseService<ReadResult>
     /// <returns></returns>
     public async Task<List<string>> DetectDomainSpecific(string? urlImage = null, Stream? stream = null, string? localImage = null)
     {
-        var res = new List<string>();
-        res.Add(await GetStatus("----------------------------------------------------------"));
-        res.Add(await GetStatus($"检测域特定内容 -  {Desc(urlImage, stream, localImage)}"));
-        res.Add(await GetStatus());
+        var res = new List<string>
+        {
+            await GetStatus("----------------------------------------------------------"),
+            await GetStatus($"检测域特定内容 -  {Desc(urlImage, stream, localImage)}"),
+            await GetStatus()
+        };
 
         if (!string.IsNullOrEmpty(urlImage))
         {
@@ -329,10 +333,12 @@ public partial class OcrService : BaseService<ReadResult>
     /// <returns></returns>
     public async Task<List<string>> GenerateThumbnail(string? urlImage = null, Stream? stream = null, string? localImage = null)
     {
-        var res = new List<string>();
-        res.Add(await GetStatus("----------------------------------------------------------"));
-        res.Add(await GetStatus($"生成缩略图 - {Desc(urlImage, stream, localImage)}"));
-        res.Add(await GetStatus());
+        var res = new List<string>
+        {
+            await GetStatus("----------------------------------------------------------"),
+            await GetStatus($"生成缩略图 - {Desc(urlImage, stream, localImage)}"),
+            await GetStatus()
+        };
         if (stream == null && !string.IsNullOrEmpty(localImage))
         {
             // 检测本地图像中特定于域的内容。
@@ -357,6 +363,6 @@ public partial class OcrService : BaseService<ReadResult>
         return res;
     }
 
-    string Desc(string? urlImage, Stream? stream, string? localImage) => urlImage != null ? Path.GetFileName(urlImage) : (stream != null ? "文件流" : localImage ?? "");
+    private string Desc(string? urlImage, Stream? stream, string? localImage) => urlImage != null ? Path.GetFileName(urlImage) : (stream != null ? "文件流" : localImage ?? "");
 }
 

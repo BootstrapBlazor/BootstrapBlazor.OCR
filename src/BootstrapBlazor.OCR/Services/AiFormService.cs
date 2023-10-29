@@ -30,11 +30,11 @@ public class AiFormService : BaseService<AnalyzedDocument>
       存储和访问您的凭据的安全方法。有关详细信息，请参阅
     https://docs.microsoft.com/en-us/azure/cognitive-services/cognitive-services-security?tabs=command-line%2Ccsharp#environment-variables-and-application-configuration
     */
-    
+
     public string Endpoint = "YOUR_FORM_RECOGNIZER_ENDPOINT";
-    
+
     public string SubscriptionKey = "YOUR_FORM_RECOGNIZER_KEY";
-    
+
     public AiFormService(IConfiguration? config)
     {
         if (config != null)
@@ -49,7 +49,7 @@ public class AiFormService : BaseService<AnalyzedDocument>
         SubscriptionKey = key;
         Endpoint = url;
     }
-    
+
 
     public async Task<List<string>> AnalyzeDocument(string? url = null, Stream? image = null, string modelId = "prebuilt-receipt")
     {

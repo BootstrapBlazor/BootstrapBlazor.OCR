@@ -83,17 +83,17 @@ public class AzureOpenAIService
             return null;
         }
 
-        var res=string.Empty;
+        var res = string.Empty;
         await foreach (var completionResponse in stream)
         {
-            if (completionResponse !=null && completionResponse?.Choices != null)
+            if (completionResponse != null && completionResponse?.Choices != null)
             {
                 res += completionResponse.Choices?.FirstOrDefault()?.Text;
                 Console.Write(completionResponse.Choices?.FirstOrDefault()?.Text);
             }
         }
 
-        return  res;
+        return res;
     }
 }
 #endif

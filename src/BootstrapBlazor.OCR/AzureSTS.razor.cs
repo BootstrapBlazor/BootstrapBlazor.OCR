@@ -55,7 +55,7 @@ public partial class AzureSTS : IAsyncDisposable
     [Inject]
     private IConfiguration? Config { get; set; }
 
-    string? ErrorMessage { get; set; }
+    private string? ErrorMessage { get; set; }
 
     [DisplayName("问点啥")]
     private string? InputText { get; set; } = DateTime.Now.ToString("F");
@@ -83,8 +83,7 @@ public partial class AzureSTS : IAsyncDisposable
         await LoadAudio(val);
     }
 
-
-    async Task LoadAudio(string? val)
+    private async Task LoadAudio(string? val)
     {
         if (string.IsNullOrWhiteSpace(val))
         {

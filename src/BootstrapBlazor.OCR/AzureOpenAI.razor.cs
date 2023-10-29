@@ -42,7 +42,7 @@ public partial class AzureOpenAI : IAsyncDisposable
     [Inject]
     private AzureOpenAIService? OpenaiService { get; set; }
 
-    CompletionResponse? Completion;
+    private CompletionResponse? Completion;
 #endif
 
     /// <summary>
@@ -51,7 +51,7 @@ public partial class AzureOpenAI : IAsyncDisposable
     [Parameter]
     public string? Search { get; set; }
 
-    string? ErrorMessage { get; set; }
+    private string? ErrorMessage { get; set; }
 
     [DisplayName("问点啥")]
     private string? InputText { get; set; }
