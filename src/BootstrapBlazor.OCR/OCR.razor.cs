@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Reflection;
 
 namespace BootstrapBlazor.Components;
 
@@ -20,9 +18,10 @@ namespace BootstrapBlazor.Components;
 public partial class OCR
 {
     public string URL { get; set; } = "https://freepos.es/uploads/demo/Doc/libai.jpg";
-    string? log;
-    string? log2;
-    
+
+    private string? log;
+    private string? log2;
+
     [Inject]
     [NotNull]
     public OcrService? OcrService { get; set; }
@@ -122,8 +121,7 @@ public partial class OCR
     public bool DetectDomainSpecific { get; set; }
 
     protected string? uploadstatus;
-
-    long maxFileSize = 1024 * 1024 * 15;
+    private long maxFileSize = 1024 * 1024 * 15;
 
     public List<ReadResult>? Results { get; set; }
 
@@ -172,7 +170,7 @@ public partial class OCR
                 StateHasChanged();
                 return;
             }
-            await OcrGO(); 
+            await OcrGO();
         }
         catch (Exception e)
         {
@@ -198,7 +196,7 @@ public partial class OCR
     {
         try
         {
-            var res = await OcrService!.StartOcr(url ?? this.URL);
+            var res = await OcrService!.StartOcr(url ?? URL);
             if (Debug)
             {
                 log = "";
@@ -244,27 +242,27 @@ public partial class OCR
 
     private async Task OnResult1(List<ReadResult> models)
     {
-        this.Results = models;
+        Results = models;
         if (OnReadResult != null) await OnReadResult.Invoke(models);
         StateHasChanged();
     }
     private async Task OnStatus1(string message)
     {
-        this.log2 = message;
+        log2 = message;
         if (OnStatus != null) await OnStatus.Invoke(message);
-        StateHasChanged(); 
+        StateHasChanged();
     }
 
     private Task OnStatus2(string message)
     {
-        log += message + Environment.NewLine; 
+        log += message + Environment.NewLine;
         StateHasChanged();
         return Task.CompletedTask;
     }
 
     private Task OnError1(string message)
     {
-        this.log2 = message;
+        log2 = message;
         StateHasChanged();
         return Task.CompletedTask;
     }
