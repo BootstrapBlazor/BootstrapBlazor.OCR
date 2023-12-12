@@ -29,6 +29,9 @@ public partial class PlayAudio : IAsyncDisposable
     [NotNull]
     private IJSObjectReference? Module { get; set; }
 
+    /// <summary>
+    /// UI界面元素的引用对象
+    /// </summary>
     private ElementReference Element { get; set; }
 
     /// <summary>

@@ -1,9 +1,9 @@
 ﻿@namespace BootstrapBlazor.Components
 
 <div class="row g-3">
-    <div class="col-12">
-        <RadioList IsButton="true" @bind-Value="@SelectedEnumItem" />
-    </div>
+    <div class="col-12" style="overflow: scroll;">
+    <RadioList IsButton="true" @bind-Value="@SelectedEnumItem" />
+</div>
     <div class="col-12" @ref="Element">
         <Textarea Id="@ID" Value="@ResultText" rows="20" />
     </div>
